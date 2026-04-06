@@ -37,7 +37,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${oswald.variable} ${dancingScript.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-stone-200">{children}</body>
+      <body suppressHydrationWarning className="min-h-full flex flex-col bg-stone-200">{children}</body>
     </html>
   );
 }
