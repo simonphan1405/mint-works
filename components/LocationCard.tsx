@@ -1,7 +1,5 @@
-import React, { ReactNode } from "react";
 import { MintTokenGroup } from "./MintTokenGroup";
 import { parseTextWithIcons } from "../utils/textParser";
-import { StarTokenGroup } from "./StarTokenGroup";
 
 export interface LocationCardProps {
   title: string;
@@ -23,7 +21,7 @@ const renderActionRow = (
 ) => (
   <div className="text-center text-[#233532] leading-[1.2]">
     <span
-      className={`${isSecondary ? "text-[32px]" : "text-[36px]"} font-[family-name:var(--font-oswald)] font-light tracking-[0.02em] align-middle`}
+      className={`${isSecondary ? "text-[32px]" : "text-[36px]"} font-oswald font-light tracking-[0.02em] align-middle`}
     >
       {parseTextWithIcons(text)}
     </span>
@@ -120,7 +118,7 @@ export function LocationCard({
             {/* Flavor text - Hidden if owner section exists to prevent collision */}
             {flavorText && !ownerText && (
               <div className="absolute bottom-[22px] w-full text-center px-4">
-                <span className="text-[#F1EAD7] opacity-90 font-[family-name:var(--font-dancing)] text-base tracking-wide inline-block leading-none">
+                <span className="text-[#F1EAD7] opacity-90 font-dancing text-base tracking-wide inline-block leading-none">
                   {flavorText}
                 </span>
               </div>
@@ -136,7 +134,7 @@ export function LocationCard({
                     boxShadow: "inset 0 2px 4px rgba(255,255,255,0.8)",
                   }}
                 >
-                  <span className="font-[family-name:var(--font-oswald)] font-medium text-[#233532] text-[20px] leading-none uppercase tracking-[0.05em]">
+                  <span className="font-oswald font-medium text-[#233532] text-[20px] leading-none uppercase tracking-[0.05em]">
                     Owner
                   </span>
                 </div>
@@ -148,7 +146,7 @@ export function LocationCard({
                   }}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="text-[#233532] font-[family-name:var(--font-oswald)] text-[26px] tracking-wide inline-flex items-center">
+                    <span className="text-[#233532] font-oswald text-[26px] tracking-wide inline-flex items-center">
                       <span className="font-semibold mr-1.5">{ownerLabel}</span>{" "}
                       {ownerText}
                     </span>
@@ -195,7 +193,7 @@ export const WreathIcon = ({ className }: { className?: string }) => (
 export const DottedCircle = ({ number }: { number: string | number }) => (
   <div className="w-[66px] h-[66px] rounded-full border-[3px] border-dotted border-[#EAE3CE] flex items-center justify-center opacity-90 mx-auto">
     <span
-      className={`text-[#EAE3CE] text-[48px] font-[family-name:var(--font-oswald)] font-medium drop-shadow-sm leading-none ${number === "*" ? "mt-4" : "mb-1"}`}
+      className={`text-[#EAE3CE] text-[48px] font-oswald font-medium drop-shadow-sm leading-none ${number === "*" ? "mt-4" : "mb-1"}`}
     >
       {number}
     </span>
