@@ -75,7 +75,7 @@ export function PlanCard({
 
         {/* Flavor Text */}
         {flavorText && (
-          <div className="text-center text-[#fdfdfd] text-base font-[family-name:var(--font-dancing)] leading-[1.1] mb-3 drop-shadow-[0px_1px_1px_rgba(0,0,0,0.15)] opacity-90">
+          <div className="text-center text-[#fdfdfd] text-base font-dancing leading-[1.1] mb-3 drop-shadow-[0px_1px_1px_rgba(0,0,0,0.15)] opacity-90">
             {flavorText}
           </div>
         )}
