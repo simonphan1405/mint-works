@@ -1,5 +1,6 @@
 import React, { ReactNode } from "react";
 import { MintTokenGroup } from "./MintTokenGroup";
+import { parseTextWithIcons } from "../utils/textParser";
 import { StarTokenGroup } from "./StarTokenGroup";
 
 export interface LocationCardProps {
@@ -15,48 +16,21 @@ export interface LocationCardProps {
   ownerTokensCount?: number;
 }
 
-const parseTextWithIcons = (text: string) => {
-  if (!text) return null;
-  const parts = text.split(/(\[MINT\]|\[MINT_\d+\]|\[STAR\]|\[STAR_\d+\]|\n)/g);
-  return parts.map((part, i) => {
-    if (part === '[MINT]') return (
-      <span key={i} className="inline-block align-middle mx-[4px] mt-[-6px]">
-        <MintTokenGroup count={1} />
-      </span>
-    );
-    if (part.startsWith('[MINT_')) {
-      const count = parseInt(part.replace('[MINT_', '').replace(']', ''), 10);
-      return (
-        <span key={i} className="inline-block align-middle mx-[4px] mt-[-6px]">
-          <MintTokenGroup count={count} />
-        </span>
-      );
-    }
-    if (part === '[STAR]') return (
-      <span key={i} className="inline-block align-text-bottom mx-[2px]">
-        <StarTokenGroup count={1} />
-      </span>
-    );
-    if (part.startsWith('[STAR_')) {
-      const count = parseInt(part.replace('[STAR_', '').replace(']', ''), 10);
-      return (
-        <span key={i} className="inline-block align-text-bottom mx-[2px]">
-          <StarTokenGroup count={count} />
-        </span>
-      );
-    }
-    if (part === '\n') return <br key={i} />;
-    return part;
-  });
-};
-
-const renderActionRow = (text: string, count: number = 0, isSecondary: boolean = false) => (
+const renderActionRow = (
+  text: string,
+  count: number = 0,
+  isSecondary: boolean = false,
+) => (
   <div className="text-center text-[#233532] leading-[1.2]">
-    <span className={`${isSecondary ? 'text-[32px]' : 'text-[36px]'} font-[family-name:var(--font-oswald)] font-light tracking-[0.02em] align-middle`}>
+    <span
+      className={`${isSecondary ? "text-[32px]" : "text-[36px]"} font-[family-name:var(--font-oswald)] font-light tracking-[0.02em] align-middle`}
+    >
       {parseTextWithIcons(text)}
     </span>
     {count > 0 ? (
-      <span className={`inline-block align-middle ml-2 ${isSecondary ? 'scale-90 origin-left' : ''}`}>
+      <span
+        className={`inline-block align-middle ml-2 ${isSecondary ? "scale-90 origin-left" : ""}`}
+      >
         <MintTokenGroup count={count} />
       </span>
     ) : null}
@@ -77,7 +51,7 @@ export function LocationCard({
 }: LocationCardProps) {
   return (
     <div
-      className="w-[660px] h-[420px] bg-[#EAE3CE] rounded-[24px] shadow-2xl p-[18px] relative flex flex-col justify-center items-center shrink-0"
+      className="w-[660px] h-[420px] bg-[#EAE3CE] rounded-[24px] shadow-2xl p-5 relative flex flex-col justify-center items-center shrink-0"
       style={{
         boxShadow:
           "0 20px 40px rgba(0,0,0,0.4), inset 0 0 60px rgba(180,165,135,0.4)",
@@ -128,7 +102,7 @@ export function LocationCard({
               ) : (
                 <WreathIcon className="w-[46px] h-[46px] drop-shadow-md ml-1" />
               )}
-              <h1 className="flex-1 text-center text-[#233532] text-4xl font-medium tracking-[0.03em] uppercase font-[family-name:var(--font-oswald)] mt-[-4px]">
+              <h1 className="flex-1 text-center text-[#233532] text-4xl font-medium tracking-[0.03em] uppercase font-oswald mt-[-4px]">
                 {title}
               </h1>
             </div>
