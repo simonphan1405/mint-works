@@ -9,6 +9,9 @@ export interface LocationCardProps {
   tokensCount?: number;
   flavorText?: string;
   iconUrl?: string;
+  ownerLabel?: string;
+  ownerText?: string;
+  ownerTokensCount?: number;
 }
 
 export function LocationCard({
@@ -19,6 +22,9 @@ export function LocationCard({
   tokensCount = 0,
   flavorText,
   iconUrl,
+  ownerLabel = "Upkeep:",
+  ownerText,
+  ownerTokensCount,
 }: LocationCardProps) {
   return (
     <div
@@ -95,12 +101,48 @@ export function LocationCard({
               </div>
             )}
 
-            {/* Flavor text */}
-            {flavorText && (
+            {/* Flavor text - Hidden if owner section exists to prevent collision */}
+            {flavorText && !ownerText && (
               <div className="absolute bottom-[22px] w-full text-center px-4">
                 <span className="text-[#F1EAD7] opacity-90 font-[family-name:var(--font-dancing)] text-base tracking-wide inline-block leading-none">
                   {flavorText}
                 </span>
+              </div>
+            )}
+
+            {/* Owner Section */}
+            {ownerText && (
+              <div className="absolute bottom-[4px] right-[4px] left-[4px] h-[58px]">
+                {/* The OWNER tab */}
+                <div
+                  className="absolute right-[0px] top-[-28px] bg-[#E1EDEB] rounded-t-[8px] px-3 py-1 flex items-center justify-center z-10"
+                  style={{
+                    boxShadow: "inset 0 2px 4px rgba(255,255,255,0.8)",
+                  }}
+                >
+                  <span className="font-[family-name:var(--font-oswald)] font-medium text-[#233532] text-[20px] leading-none uppercase tracking-[0.05em]">
+                    Owner
+                  </span>
+                </div>
+                {/* Main Upkeep box */}
+                <div
+                  className="absolute bottom-0 w-full h-full bg-[#E1EDEB] rounded-[6px] rounded-tr-none z-20 flex items-center justify-center gap-2"
+                  style={{
+                    boxShadow: "inset 0 2px 4px rgba(255,255,255,0.6)",
+                  }}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-[#233532] font-[family-name:var(--font-oswald)] text-[26px] tracking-wide inline-flex items-center">
+                      <span className="font-semibold mr-1.5">{ownerLabel}</span>{" "}
+                      {ownerText}
+                    </span>
+                    {ownerTokensCount ? (
+                      <span className="inline-block align-middle ml-1">
+                        <TokenGroup count={ownerTokensCount} />
+                      </span>
+                    ) : null}
+                  </div>
+                </div>
               </div>
             )}
           </div>

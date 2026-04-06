@@ -14,6 +14,9 @@ export default function Home() {
           actionText={loc.actionText}
           tokensCount={loc.tokensCount}
           iconUrl={loc.iconUrl}
+          ownerLabel={loc.ownerLabel}
+          ownerText={loc.ownerText}
+          ownerTokensCount={loc.ownerTokensCount}
         />
       ))}
     </div>
