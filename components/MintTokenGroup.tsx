@@ -8,7 +8,7 @@ export const MintToken = ({ className = "" }: { className?: string }) => (
   />
 );
 
-export const TokenGroup = ({ count }: { count: number }) => {
+export const MintTokenGroup = ({ count }: { count: number }) => {
   if (count <= 0) return null;
   return (
     <div className="inline-flex -space-x-[20px] items-center">

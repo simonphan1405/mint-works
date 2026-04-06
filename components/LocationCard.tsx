@@ -1,5 +1,6 @@
 import React, { ReactNode } from "react";
-import { TokenGroup } from "./TokenGroup";
+import { MintTokenGroup } from "./MintTokenGroup";
+import { StarTokenGroup } from "./StarTokenGroup";
 
 export interface LocationCardProps {
   title: string;
@@ -13,6 +14,54 @@ export interface LocationCardProps {
   ownerText?: string;
   ownerTokensCount?: number;
 }
+
+const parseTextWithIcons = (text: string) => {
+  if (!text) return null;
+  const parts = text.split(/(\[MINT\]|\[MINT_\d+\]|\[STAR\]|\[STAR_\d+\]|\n)/g);
+  return parts.map((part, i) => {
+    if (part === '[MINT]') return (
+      <span key={i} className="inline-block align-middle mx-[4px] mt-[-6px]">
+        <MintTokenGroup count={1} />
+      </span>
+    );
+    if (part.startsWith('[MINT_')) {
+      const count = parseInt(part.replace('[MINT_', '').replace(']', ''), 10);
+      return (
+        <span key={i} className="inline-block align-middle mx-[4px] mt-[-6px]">
+          <MintTokenGroup count={count} />
+        </span>
+      );
+    }
+    if (part === '[STAR]') return (
+      <span key={i} className="inline-block align-text-bottom mx-[2px]">
+        <StarTokenGroup count={1} />
+      </span>
+    );
+    if (part.startsWith('[STAR_')) {
+      const count = parseInt(part.replace('[STAR_', '').replace(']', ''), 10);
+      return (
+        <span key={i} className="inline-block align-text-bottom mx-[2px]">
+          <StarTokenGroup count={count} />
+        </span>
+      );
+    }
+    if (part === '\n') return <br key={i} />;
+    return part;
+  });
+};
+
+const renderActionRow = (text: string, count: number = 0, isSecondary: boolean = false) => (
+  <div className="text-center text-[#233532] leading-[1.2]">
+    <span className={`${isSecondary ? 'text-[32px]' : 'text-[36px]'} font-[family-name:var(--font-oswald)] font-light tracking-[0.02em] align-middle`}>
+      {parseTextWithIcons(text)}
+    </span>
+    {count > 0 ? (
+      <span className={`inline-block align-middle ml-2 ${isSecondary ? 'scale-90 origin-left' : ''}`}>
+        <MintTokenGroup count={count} />
+      </span>
+    ) : null}
+  </div>
+);
 
 export function LocationCard({
   title,
@@ -89,15 +138,8 @@ export function LocationCard({
           <div className="flex-1 bg-[#89AFA7] rounded-[10px] border border-[#7C9E96]/30 shadow-[inset_1px_1px_5px_rgba(0,0,0,0.1)] flex flex-col relative items-center justify-center">
             {/* Action */}
             {actionText && (
-              <div className="mt-[-20px] text-center text-[#233532] px-[36px] leading-[1.2]">
-                <span className="text-[36px] font-[family-name:var(--font-oswald)] font-light tracking-[0.02em] align-middle">
-                  {actionText}
-                </span>
-                {tokensCount ? (
-                  <span className="inline-block align-middle ml-2">
-                    <TokenGroup count={tokensCount} />
-                  </span>
-                ) : null}
+              <div className="mt-[-20px] flex flex-col items-center justify-center gap-1 w-full relative z-10 px-2">
+                {renderActionRow(actionText, tokensCount, false)}
               </div>
             )}
 
@@ -138,7 +180,7 @@ export function LocationCard({
                     </span>
                     {ownerTokensCount ? (
                       <span className="inline-block align-middle ml-1">
-                        <TokenGroup count={ownerTokensCount} />
+                        <MintTokenGroup count={ownerTokensCount} />
                       </span>
                     ) : null}
                   </div>
