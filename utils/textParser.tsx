@@ -1,8 +1,11 @@
 import { MintTokenGroup } from "../components/MintTokenGroup";
 import { StarTokenGroup } from "../components/StarTokenGroup";
-import { LeafIcon } from "../components/LeafIcon";
+import { FaLeaf } from "react-icons/fa";
 
-export const parseTextWithIcons = (text: string, iconClassName: string = "") => {
+export const parseTextWithIcons = (
+  text: string,
+  iconClassName: string = "",
+) => {
   if (!text) return null;
   const parts = text.split(
     /(\[MINT\]|\[MINT_\d+\]|\[STAR\]|\[STAR_\d+\]|\[LEAF\]|\n)/g,
@@ -39,7 +42,7 @@ export const parseTextWithIcons = (text: string, iconClassName: string = "") => 
     if (part === "[LEAF]")
       return (
         <span key={i} className={`inline-block align-middle ${iconClassName}`}>
-          <LeafIcon className="w-10 h-10" />
+          <FaLeaf className="w-10 h-10 text-white -rotate-30" />
         </span>
       );
     if (part === "\n") return <br key={i} />;
