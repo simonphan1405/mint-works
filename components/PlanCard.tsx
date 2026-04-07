@@ -1,42 +1,16 @@
 import { MintTokenGroup } from "./MintTokenGroup";
 import { parseTextWithIcons } from "../utils/textParser";
-import { LeafIcon } from "./LeafIcon";
 import { PlanData } from "../data/plans";
-import {
-  GiWindmill,
-  GiStoneBridge,
-  GiStoneBust,
-  GiBank,
-  GiGreekTemple,
-  GiFlowers,
-} from "react-icons/gi";
-
-const getPlanIcon = (id: string, className: string) => {
-  switch (id) {
-    case "windmill":
-      return <GiWindmill className={className} />;
-    case "statue":
-      return <GiStoneBust className={className} />;
-    case "gallery":
-      return <GiBank className={className} />;
-    case "bridge":
-      return <GiStoneBridge className={className} />;
-    case "museum":
-      return <GiGreekTemple className={className} />;
-    case "gardens":
-      return <GiFlowers className={className} />;
-    default:
-      return null;
-  }
-};
+import { FaLeaf, FaHammer, FaScroll, FaScrewdriver } from "react-icons/fa";
+import { getPlanIcon } from "../utils/planIconMapper";
 
 export function PlanCard({
   id,
-  title,
+  name,
+  type,
   cost,
-  flavorText,
-  actionText,
-  pointsText,
+  effect,
+  starValue,
 }: PlanData) {
   return (
     <div
@@ -53,13 +27,24 @@ export function PlanCard({
 
       {/* Top Header Block */}
       <div className="relative h-[65px] flex items-center justify-center bg-[#B2C65A] rounded-[10px] border border-[#A1B846]/40 shadow-[inset_1px_1px_5px_rgba(0,0,0,0.1)] z-10 w-full mb-1">
-        {/* Leaf Badge overlapping top left */}
-        <div className="absolute -left-3 top-1/2 -translate-y-1/2 z-20">
-          <LeafIcon className="w-[48px] h-[48px] drop-shadow-[2px_2px_3px_rgba(0,0,0,0.25)] origin-center -rotate-12" />
+        {/* Type Badge overlapping top left */}
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 z-20">
+          {type === "Culture" && (
+            <FaLeaf className="w-10 h-10 drop-shadow-[2px_2px_3px_rgba(0,0,0,0.25)] text-white -rotate-30" />
+          )}
+          {type === "Production" && (
+            <FaHammer className="w-10 h-10 drop-shadow-[2px_2px_3px_rgba(0,0,0,0.25)] text-white -rotate-30" />
+          )}
+          {type === "Utility" && (
+            <FaScrewdriver className="w-10 h-10 drop-shadow-[2px_2px_3px_rgba(0,0,0,0.25)] text-white -rotate-30" />
+          )}
+          {type === "Deed" && (
+            <FaScroll className="w-10 h-10 drop-shadow-[2px_2px_3px_rgba(0,0,0,0.25)] text-white" />
+          )}
         </div>
 
         <h1 className="text-center text-[#233532] text-3xl font-medium tracking-[0.03em] font-oswald mt-[-6px] ml-4">
-          {title}
+          {name}
         </h1>
       </div>
 
@@ -76,16 +61,16 @@ export function PlanCard({
           <div className="flex-1 min-h-0 flex items-center justify-center w-full">
             {getPlanIcon(
               id,
-              `w-full h-full ${actionText ? "max-w-[85px] max-h-[85px]" : "max-w-[130px] max-h-[130px]"} drop-shadow-[2px_2px_2px_rgba(0,0,0,0.15)] text-[#fdfdfd] opacity-90 mix-blend-plus-lighter`,
+              `w-full h-full ${effect ? "max-w-[85px] max-h-[85px]" : "max-w-[130px] max-h-[130px]"} drop-shadow-[2px_2px_2px_rgba(0,0,0,0.15)] text-[#fdfdfd] opacity-90 mix-blend-plus-lighter`,
             )}
           </div>
 
           {/* Action Text */}
-          {actionText && (
+          {effect && (
             <div className="flex-1 min-h-0 flex items-center justify-center w-full text-center text-[#233532] leading-[1.1] px-1 mt-1">
               <span className="text-base font-oswald tracking-[0.01em] align-middle">
                 {parseTextWithIcons(
-                  actionText,
+                  effect,
                   "scale-[0.75] origin-center -my-[8px] mx-[2px]",
                 )}
               </span>
@@ -93,18 +78,11 @@ export function PlanCard({
           )}
         </div>
 
-        {/* Flavor Text */}
-        {flavorText && (
-          <div className="text-center text-[#fdfdfd] text-base font-dancing leading-[1.1] mb-3 drop-shadow-[0px_1px_1px_rgba(0,0,0,0.15)] opacity-90">
-            {flavorText}
-          </div>
-        )}
-
         {/* Points Overlay / Footer */}
-        {pointsText && (
+        {starValue && (
           <div className="text-center text-[#233532] mt-auto">
             <span className="text-lg font-oswald font-normal tracking-[0.02em] align-middle">
-              {parseTextWithIcons(pointsText)}
+              {parseTextWithIcons(starValue)}
             </span>
           </div>
         )}

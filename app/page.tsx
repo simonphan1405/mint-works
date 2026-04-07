@@ -36,12 +36,11 @@ export default function Home() {
             <PlanCard
               key={plan.id}
               id={plan.id}
-              title={plan.title}
+              name={plan.name}
+              type={plan.type}
               cost={plan.cost}
-              iconUrl={plan.iconUrl}
-              actionText={plan.actionText}
-              flavorText={plan.flavorText}
-              pointsText={plan.pointsText}
+              effect={plan.effect}
+              starValue={plan.starValue}
             />
           ))}
         </div>
