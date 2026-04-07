@@ -32,7 +32,7 @@ export function LocationCard({
 }: LocationCardProps) {
   return (
     <div
-      className="w-[312px] h-[189px] bg-[#EAE3CE] rounded-[12px] shadow-xl p-2.5 relative flex flex-col justify-center items-center shrink-0"
+      className="w-[321px] h-[189px] bg-[#EAE3CE] rounded-[12px] shadow-xl p-2.5 relative flex flex-col justify-center items-center shrink-0"
       style={{
         boxShadow:
           "0 10px 20px rgba(0,0,0,0.3), inset 0 0 30px rgba(180,165,135,0.3)",

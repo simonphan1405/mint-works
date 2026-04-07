@@ -50,7 +50,9 @@ export const parseTextWithIcons = (
     if (part === "[LEAF]")
       return (
         <span key={i} className={`inline-block align-middle ${iconClassName}`}>
-          <FaLeaf className={`${leafSizeConfig[tokenSize]} text-white -rotate-30`} />
+          <FaLeaf
+            className={`${leafSizeConfig[tokenSize]} text-white -rotate-30`}
+          />
         </span>
       );
     if (part === "\n") return <br key={i} />;

@@ -23,7 +23,7 @@ export function PlanCard({
 
   return (
     <div
-      className="w-[300px] h-[420px] bg-[#EAE3CE] rounded-[15px] p-4 flex flex-col border-[1.5px] border-[#2B2B2B] relative overflow-hidden shadow-xl"
+      className="w-[189px] h-[321px] bg-[#EAE3CE] rounded-[10px] p-2.5 flex flex-col border-[1.5px] border-[#2B2B2B] relative overflow-hidden shadow-xl"
       style={{ boxShadow: "2px 2px 8px rgba(0,0,0,0.3)" }}
     >
       {/* Background texture overlay */}
@@ -35,52 +35,57 @@ export function PlanCard({
       />
 
       {/* Top Header Block */}
-      <div className={`relative h-[65px] flex items-center justify-center ${config.bg} rounded-[10px] border ${config.border} shadow-[inset_1px_1px_5px_rgba(0,0,0,0.1)] z-10 w-full mb-1`}>
+      <div
+        className={`relative h-[48px] flex items-center justify-center ${config.bg} rounded-[8px] border ${config.border} shadow-[inset_1px_1px_5px_rgba(0,0,0,0.1)] z-10 w-full mb-1`}
+      >
         {/* Type Badge overlapping top left */}
         <div className="absolute left-0 top-1/2 -translate-y-1/2 z-20">
           {type === "Culture" && (
-            <FaLeaf className="w-10 h-10 drop-shadow-[2px_2px_3px_rgba(0,0,0,0.25)] text-white -rotate-30" />
+            <FaLeaf className="w-7 h-7 drop-shadow-[2px_2px_3px_rgba(0,0,0,0.25)] text-white -rotate-30" />
           )}
           {type === "Production" && (
-            <FaHammer className="w-10 h-10 drop-shadow-[2px_2px_3px_rgba(0,0,0,0.25)] text-white -rotate-30" />
+            <FaHammer className="w-7 h-7 drop-shadow-[2px_2px_3px_rgba(0,0,0,0.25)] text-white -rotate-30" />
           )}
           {type === "Utility" && (
-            <FaScrewdriver className="w-10 h-10 drop-shadow-[2px_2px_3px_rgba(0,0,0,0.25)] text-white -rotate-30" />
+            <FaScrewdriver className="w-7 h-7 drop-shadow-[2px_2px_3px_rgba(0,0,0,0.25)] text-white -rotate-30" />
           )}
           {type === "Deed" && (
-            <FaScroll className="w-10 h-10 drop-shadow-[2px_2px_3px_rgba(0,0,0,0.25)] text-white" />
+            <FaScroll className="w-7 h-7 drop-shadow-[2px_2px_3px_rgba(0,0,0,0.25)] text-white" />
           )}
         </div>
 
-        <h1 className="text-center text-[#233532] text-3xl font-medium tracking-[0.03em] font-oswald mt-[-6px] ml-4">
+        <h1 className="text-center text-[#233532] text-xl font-medium tracking-[0.03em] font-oswald mt-[-4px] ml-3">
           {name}
         </h1>
       </div>
 
       {/* Cost Token Block */}
-      <div className="h-[60px] w-full flex items-center justify-center z-10 shrink-0">
-        <MintTokenGroup count={cost} />
+      <div className="h-[44px] w-full flex items-center justify-center z-10 shrink-0">
+        <MintTokenGroup count={cost} size="sm" />
       </div>
 
       {/* Main Body Block */}
-      <div className={`flex-1 ${config.bg} rounded-[10px] border ${config.border} shadow-[inset_1px_1px_5px_rgba(0,0,0,0.1)] flex flex-col items-center pb-2 pt-4 px-3 relative z-10 w-full overflow-hidden`}>
+      <div
+        className={`flex-1 ${config.bg} rounded-[8px] border ${config.border} shadow-[inset_1px_1px_5px_rgba(0,0,0,0.1)] flex flex-col items-center pb-1.5 pt-2.5 px-2 relative z-10 w-full overflow-hidden`}
+      >
         {/* Shared Workspace for Icon and Action Text */}
         <div className="flex-1 flex flex-col items-center justify-center w-full min-h-0 mb-2 gap-1">
           {/* Large Vector Icon (Center) */}
           <div className="flex-1 min-h-0 flex items-center justify-center w-full">
             {getPlanIcon(
               id,
-              `w-full h-full ${effect ? "max-w-[85px] max-h-[85px]" : "max-w-[130px] max-h-[130px]"} drop-shadow-[2px_2px_2px_rgba(0,0,0,0.15)] text-[#fdfdfd] opacity-90 mix-blend-plus-lighter`,
+              `w-full h-full ${effect ? "max-w-[55px] max-h-[55px]" : "max-w-[85px] max-h-[85px]"} drop-shadow-[2px_2px_2px_rgba(0,0,0,0.15)] text-[#fdfdfd] opacity-90 mix-blend-plus-lighter`,
             )}
           </div>
 
           {/* Action Text */}
           {effect && (
             <div className="flex-1 min-h-0 flex items-center justify-center w-full text-center text-[#233532] leading-[1.1] px-1 mt-1">
-              <span className="text-base font-oswald tracking-[0.01em] align-middle">
+              <span className="text-[11px] font-oswald tracking-[0.01em] align-middle">
                 {parseTextWithIcons(
                   effect,
-                  "scale-[0.75] origin-center -my-[8px] mx-[2px]",
+                  "scale-[0.5] origin-center -my-[6px] mx-[-10px]",
+                  "md",
                 )}
               </span>
             </div>
@@ -90,8 +95,8 @@ export function PlanCard({
         {/* Points Overlay / Footer */}
         {starValue && (
           <div className="text-center text-[#233532] mt-auto">
-            <span className="text-lg font-oswald font-normal tracking-[0.02em] align-middle">
-              {parseTextWithIcons(starValue)}
+            <span className="text-sm font-oswald font-normal tracking-[0.02em] align-middle">
+              {parseTextWithIcons(starValue, "", "sm")}
             </span>
           </div>
         )}
