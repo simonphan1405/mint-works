@@ -129,7 +129,7 @@ export function LocationCard({
               <div className="absolute bottom-[4px] right-[4px] left-[4px] h-[58px]">
                 {/* The OWNER tab */}
                 <div
-                  className="absolute right-[0px] top-[-28px] bg-[#E1EDEB] rounded-t-[8px] px-3 py-1 flex items-center justify-center z-10"
+                  className="absolute right-0 top-[-28px] bg-[#E1EDEB] rounded-t-[8px] px-3 py-1 flex items-center justify-center z-10"
                   style={{
                     boxShadow: "inset 0 2px 4px rgba(255,255,255,0.8)",
                   }}
