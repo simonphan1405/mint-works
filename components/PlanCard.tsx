@@ -2,11 +2,38 @@ import { MintTokenGroup } from "./MintTokenGroup";
 import { parseTextWithIcons } from "../utils/textParser";
 import { LeafIcon } from "./LeafIcon";
 import { PlanData } from "../data/plans";
+import {
+  GiWindmill,
+  GiStoneBridge,
+  GiStoneBust,
+  GiBank,
+  GiGreekTemple,
+  GiFlowers,
+} from "react-icons/gi";
+
+const getPlanIcon = (id: string, className: string) => {
+  switch (id) {
+    case "windmill":
+      return <GiWindmill className={className} />;
+    case "statue":
+      return <GiStoneBust className={className} />;
+    case "gallery":
+      return <GiBank className={className} />;
+    case "bridge":
+      return <GiStoneBridge className={className} />;
+    case "museum":
+      return <GiGreekTemple className={className} />;
+    case "gardens":
+      return <GiFlowers className={className} />;
+    default:
+      return null;
+  }
+};
 
 export function PlanCard({
+  id,
   title,
   cost,
-  iconUrl,
   flavorText,
   actionText,
   pointsText,
@@ -46,19 +73,12 @@ export function PlanCard({
         {/* Shared Workspace for Icon and Action Text */}
         <div className="flex-1 flex flex-col items-center justify-center w-full min-h-0 mb-2 gap-1">
           {/* Large Vector Icon (Center) */}
-          {iconUrl && (
-            <div className="flex-1 min-h-0 flex items-center justify-center w-full">
-              <img
-                src={iconUrl}
-                alt={title + " icon"}
-                className="w-full h-full max-w-[140px] max-h-[140px] object-contain drop-shadow-[1px_1px_2px_rgba(0,0,0,0.2)] mix-blend-plus-lighter opacity-90"
-                style={{
-                  filter:
-                    "brightness(0) invert(1) drop-shadow(2px 2px 2px rgba(0,0,0,0.15))",
-                }}
-              />
-            </div>
-          )}
+          <div className="flex-1 min-h-0 flex items-center justify-center w-full">
+            {getPlanIcon(
+              id,
+              `w-full h-full ${actionText ? "max-w-[85px] max-h-[85px]" : "max-w-[130px] max-h-[130px]"} drop-shadow-[2px_2px_2px_rgba(0,0,0,0.15)] text-[#fdfdfd] opacity-90 mix-blend-plus-lighter`,
+            )}
+          </div>
 
           {/* Action Text */}
           {actionText && (
