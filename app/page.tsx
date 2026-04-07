@@ -13,16 +13,14 @@ export default function Home() {
           {locations.map((loc) => (
             <LocationCard
               key={loc.id}
-              title={loc.title}
-              points={loc.points}
+              name={loc.name}
+              type={loc.type}
+              mintPlacementSpace={loc.mintPlacementSpace}
               playersText={loc.playersText}
               flavorText={loc.flavorText}
-              actionText={loc.actionText}
-              tokensCount={loc.tokensCount}
-              iconUrl={loc.iconUrl}
+              effect={loc.effect}
               ownerLabel={loc.ownerLabel}
-              ownerText={loc.ownerText}
-              ownerTokensCount={loc.ownerTokensCount}
+              ownerEffect={loc.ownerEffect}
             />
           ))}
         </div>
