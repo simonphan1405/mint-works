@@ -4,6 +4,13 @@ import { PlanData } from "../data/plans";
 import { FaLeaf, FaHammer, FaScroll, FaScrewdriver } from "react-icons/fa";
 import { getPlanIcon } from "../utils/planIconMapper";
 
+const typeConfig = {
+  Culture: { bg: "bg-[#B2C65A]", border: "border-[#A1B846]/40" },
+  Production: { bg: "bg-[#D17D73]", border: "border-[#BC6B61]/40" },
+  Utility: { bg: "bg-[#E9B04D]", border: "border-[#D39B3C]/40" },
+  Deed: { bg: "bg-[#A9BDB9]", border: "border-[#92A7A3]/40" },
+};
+
 export function PlanCard({
   id,
   name,
@@ -12,6 +19,8 @@ export function PlanCard({
   effect,
   starValue,
 }: PlanData) {
+  const config = typeConfig[type] || typeConfig.Culture;
+
   return (
     <div
       className="w-[300px] h-[420px] bg-[#EAE3CE] rounded-[15px] p-4 flex flex-col border-[1.5px] border-[#2B2B2B] relative overflow-hidden shadow-xl"
@@ -26,7 +35,7 @@ export function PlanCard({
       />
 
       {/* Top Header Block */}
-      <div className="relative h-[65px] flex items-center justify-center bg-[#B2C65A] rounded-[10px] border border-[#A1B846]/40 shadow-[inset_1px_1px_5px_rgba(0,0,0,0.1)] z-10 w-full mb-1">
+      <div className={`relative h-[65px] flex items-center justify-center ${config.bg} rounded-[10px] border ${config.border} shadow-[inset_1px_1px_5px_rgba(0,0,0,0.1)] z-10 w-full mb-1`}>
         {/* Type Badge overlapping top left */}
         <div className="absolute left-0 top-1/2 -translate-y-1/2 z-20">
           {type === "Culture" && (
@@ -54,7 +63,7 @@ export function PlanCard({
       </div>
 
       {/* Main Body Block */}
-      <div className="flex-1 bg-[#B2C65A] rounded-[10px] border border-[#A1B846]/40 shadow-[inset_1px_1px_5px_rgba(0,0,0,0.1)] flex flex-col items-center pb-2 pt-4 px-3 relative z-10 w-full overflow-hidden">
+      <div className={`flex-1 ${config.bg} rounded-[10px] border ${config.border} shadow-[inset_1px_1px_5px_rgba(0,0,0,0.1)] flex flex-col items-center pb-2 pt-4 px-3 relative z-10 w-full overflow-hidden`}>
         {/* Shared Workspace for Icon and Action Text */}
         <div className="flex-1 flex flex-col items-center justify-center w-full min-h-0 mb-2 gap-1">
           {/* Large Vector Icon (Center) */}
