@@ -1,6 +1,6 @@
 import { MintTokenGroup } from "./MintTokenGroup";
 import { parseTextWithIcons } from "../../lib/textParser";
-import { PlanData } from "../../data/cards/plans";
+import type { PlanData } from "@/data/cards/plans";
 import { FaLeaf, FaHammer, FaScroll, FaScrewdriver } from "react-icons/fa";
 import { getPlanIcon } from "../../lib/planIconMapper";
 
