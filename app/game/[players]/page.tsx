@@ -1,4 +1,6 @@
-import { GameBoard } from "../../../components/board/GameBoard";
+import { GameBoardContainer } from "@/components/board/GameBoardContainer";
+import { GameProvider } from "@/features/game/state/GameProvider";
+import { createGameState } from "@/features/game/state/gameReducer";
 
 export default async function Page({
   params,
@@ -7,6 +9,11 @@ export default async function Page({
 }) {
   const { players } = await params;
   const playerCount = parseInt(players, 10) || 2;
+  const initialState = createGameState(playerCount);
 
-  return <GameBoard initialPlayers={playerCount} />;
+  return (
+    <GameProvider initialState={initialState}>
+      <GameBoardContainer />
+    </GameProvider>
+  );
 }

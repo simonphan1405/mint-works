@@ -1,84 +1,29 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { FaChevronLeft } from "react-icons/fa";
 import { LocationCard, PlanOption } from "../cards/LocationCard";
 import { PlanCard } from "../cards/PlanCard";
-import { locations, LocationData } from "../../data/cards/locations";
-import { plans, PlanData } from "../../data/cards/plans";
-
-// ─── helpers ──────────────────────────────────────────────────────────────────
-
-function shuffle<T>(arr: T[]): T[] {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-function pickLocations(playerCount: number): LocationData[] {
-  // Core + Deed ordered slots, pick correct variant per player count
-  const pick = (base: string) => {
-    // Try to find a variant whose playersText matches, fallback to the first
-    const variants = locations.filter((l) => l.id.startsWith(base));
-    const match =
-      variants.find((v) => {
-        if (!v.playersText) return false;
-        if (v.playersText.includes("1 or 4"))
-          return playerCount === 1 || playerCount === 4;
-        if (v.playersText.includes("2-3"))
-          return playerCount === 2 || playerCount === 3;
-        if (v.playersText.includes("Players 4")) return playerCount === 4;
-        if (v.playersText.includes("Players 1-3")) return playerCount <= 3;
-        return false;
-      }) ?? variants[0];
-    return match;
-  };
-
-  const coreOrdered: LocationData[] = [
-    pick("producer"),
-    pick("wholesaler"),
-    pick("builder"),
-    pick("supplier"),
-    locations.find((l) => l.id === "leadership")!,
-    locations.find((l) => l.id === "lotto")!,
-  ].filter(Boolean);
-
-  const advancedCount = playerCount === 1 ? 1 : 2;
-  const advancedPool = locations.filter((l) => l.type === "Advanced");
-  const randomAdvanced = shuffle(advancedPool).slice(0, advancedCount);
-
-  return [...coreOrdered, ...randomAdvanced];
-}
-
-function pickPlans(playerCount: number): PlanData[] {
-  const count = playerCount === 1 ? 2 : 3;
-  // Use seed to re-shuffle when user clicks regenerate
-  const shuffled = shuffle([...plans]);
-  return shuffled.slice(0, count);
-}
-
-// ─── Component ────────────────────────────────────────────────────────────────
+import type { LocationData } from "@/data/cards/locations";
+import type { PlanData } from "@/data/cards/plans";
 
 export interface GameBoardProps {
-  initialPlayers: number;
+  players: number;
+  seed: number;
+  activeLocations: LocationData[];
+  activePlans: PlanData[];
+  onResetBoard: () => void;
 }
 
-export function GameBoard({ initialPlayers }: GameBoardProps) {
-  const [players, setPlayers] = useState<number>(initialPlayers);
-  const [seed, setSeed] = useState(0);
+export function GameBoard({
+  players,
+  seed,
+  activeLocations,
+  activePlans,
+  onResetBoard,
+}: GameBoardProps) {
   const [confirmReset, setConfirmReset] = useState(false);
-
-  const [activeLocations, setActiveLocations] = useState<LocationData[]>([]);
-  const [activePlans, setActivePlans] = useState<PlanData[]>([]);
-
-  useEffect(() => {
-    setActiveLocations(pickLocations(players));
-    setActivePlans(pickPlans(players));
-  }, [players, seed]);
 
   return (
     <div className="min-h-screen bg-[#1C1A17] flex flex-col font-sans">
@@ -123,7 +68,10 @@ export function GameBoard({ initialPlayers }: GameBoardProps) {
               </span>
               <button
                 id="reset-confirm-btn"
-                onClick={() => { setSeed((s) => s + 1); setConfirmReset(false); }}
+                onClick={() => {
+                  onResetBoard();
+                  setConfirmReset(false);
+                }}
                 className="flex items-center gap-1.5 px-3 py-2 rounded-[6px] bg-red-500/20 border border-red-400/50 text-red-300 hover:bg-red-500/30 hover:border-red-400 transition-all duration-200 font-oswald text-sm tracking-wider uppercase"
               >
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
