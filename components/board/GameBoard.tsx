@@ -3,17 +3,25 @@
 import { useState } from "react";
 import Link from "next/link";
 import { FaChevronLeft } from "react-icons/fa";
-import { LocationCard, PlanOption } from "../cards/LocationCard";
+import { LocationCard, PlanOption, SpaceOption } from "../cards/LocationCard";
 import { PlanCard } from "../cards/PlanCard";
-import type { LocationData } from "@/data/cards/locations";
+import { PlayersPanel } from "./PlayersPanel";
 import type { PlanData } from "@/data/cards/plans";
+import type { LocationCardViewModel, PlayerState } from "@/features/game/model/types";
 
 export interface GameBoardProps {
   players: number;
   seed: number;
-  activeLocations: LocationData[];
+  activeLocations: LocationCardViewModel[];
   activePlans: PlanData[];
+  playerStates: PlayerState[];
+  currentPlayerId: string;
   onResetBoard: () => void;
+  onToggleLocationSpace: (
+    locationId: string,
+    spaceIndex: number,
+    mintCount?: number,
+  ) => void;
 }
 
 export function GameBoard({
@@ -21,7 +29,10 @@ export function GameBoard({
   seed,
   activeLocations,
   activePlans,
+  playerStates,
+  currentPlayerId,
   onResetBoard,
+  onToggleLocationSpace,
 }: GameBoardProps) {
   const [confirmReset, setConfirmReset] = useState(false);
 
@@ -138,13 +149,16 @@ export function GameBoard({
                 <LocationCard
                   name={loc.name}
                   type={loc.type}
-                  mintPlacementSpace={loc.mintPlacementSpace}
+                  mintPlacementSpace={loc.mintPlacementSpace as SpaceOption[]}
                   playersText={loc.playersText}
                   flavorText={loc.flavorText}
                   effect={loc.effect}
                   ownerLabel={loc.ownerLabel}
                   ownerEffect={loc.ownerEffect}
                   planOptions={activePlans.map((p): PlanOption => ({ id: p.id, name: p.name, cost: p.cost }))}
+                  onSpaceClick={(spaceIndex, mintCount) =>
+                    onToggleLocationSpace(loc.runtimeId, spaceIndex, mintCount)
+                  }
                 />
               </div>
             ))}
@@ -182,6 +196,8 @@ export function GameBoard({
           </div>
         </section>
       </main>
+
+      <PlayersPanel players={playerStates} currentPlayerId={currentPlayerId} />
     </div>
   );
 }

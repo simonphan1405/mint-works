@@ -11,16 +11,23 @@ export interface PlanOption {
   cost: number;
 }
 
+export interface SpaceOption {
+  displayValue: string | number;
+  occupied?: boolean;
+  occupiedMintCount?: number;
+}
+
 export interface LocationCardProps {
   name: string;
   type: "Core" | "Deed" | "Advanced";
-  mintPlacementSpace: (string | number)[];
+  mintPlacementSpace: SpaceOption[];
   playersText?: string;
   effect?: string;
   flavorText?: string;
   ownerLabel?: string;
   ownerEffect?: string;
   planOptions?: PlanOption[];
+  onSpaceClick?: (spaceIndex: number, mintCount?: number) => void;
 }
 
 const renderEffectRow = (text: string) => (
@@ -41,6 +48,7 @@ export function LocationCard({
   ownerLabel = "Upkeep:",
   ownerEffect,
   planOptions = [],
+  onSpaceClick,
 }: LocationCardProps) {
   return (
     <div
@@ -63,8 +71,15 @@ export function LocationCard({
         {/* Left Column - Players */}
         <div className="w-[68px] bg-[#89AFA7] rounded-[6px] border border-[#7C9E96]/30 shadow-[inset_1px_1px_5px_rgba(0,0,0,0.1)] flex flex-col items-center justify-center py-2 relative overflow-visible">
           <div className="flex flex-col gap-[16px] items-center z-10">
-            {mintPlacementSpace.map((pt, i) => (
-              <DottedCircle key={i} number={pt} planOptions={planOptions} />
+            {mintPlacementSpace.map((space, i) => (
+              <DottedCircle
+                key={i}
+                number={space.displayValue}
+                occupied={space.occupied}
+                occupiedMintCount={space.occupiedMintCount}
+                planOptions={planOptions}
+                onChange={(mintCount) => onSpaceClick?.(i, mintCount)}
+              />
             ))}
           </div>
 
@@ -158,44 +173,61 @@ type DottedCircleState = "empty" | "selecting" | "occupied";
 
 export const DottedCircle = ({
   number,
+  occupied = false,
+  occupiedMintCount,
   planOptions = [],
+  onChange,
 }: {
   number: string | number;
+  occupied?: boolean;
+  occupiedMintCount?: number;
   planOptions?: PlanOption[];
+  onChange?: (mintCount?: number) => void;
 }) => {
   const isWildcard = number === "*" || number === "1+";
   const fixedCount = isWildcard ? 0 : (parseInt(String(number), 10) || 1);
 
-  const [state, setState] = useState<DottedCircleState>("empty");
-  const [occupiedCount, setOccupiedCount] = useState(0);
+  const [state, setState] = useState<DottedCircleState>(occupied ? "occupied" : "empty");
+  const [occupiedCount, setOccupiedCount] = useState(occupiedMintCount ?? 0);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setState(occupied ? "occupied" : "empty");
+    setOccupiedCount(occupiedMintCount ?? 0);
+  }, [occupied, occupiedMintCount]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
     if (state !== "selecting") return;
     const handler = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setState("empty");
+        setState(occupied ? "occupied" : "empty");
       }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
-  }, [state]);
+  }, [occupied, state]);
 
   const handleClick = () => {
     if (!isWildcard) {
-      // Numeric space: toggle occupied
-      setState((s) => (s === "empty" ? "occupied" : "empty"));
+      const nextOccupied = state === "empty";
+      setState(nextOccupied ? "occupied" : "empty");
+      onChange?.();
       return;
     }
     // Wildcard: empty → selecting, occupied → empty
     if (state === "empty") setState("selecting");
-    else if (state === "occupied") { setState("empty"); setOccupiedCount(0); }
+    else if (state === "occupied") {
+      setState("empty");
+      setOccupiedCount(0);
+      onChange?.();
+    }
   };
 
   const handleSelectPlan = (cost: number) => {
     setOccupiedCount(cost);
     setState("occupied");
+    onChange?.(cost);
   };
 
   const count = isWildcard ? occupiedCount : fixedCount;

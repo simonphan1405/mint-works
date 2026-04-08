@@ -1,6 +1,10 @@
-import { locations, type LocationData } from "@/data/cards/locations";
+import { locations } from "@/data/cards/locations";
 import { plans, type PlanData } from "@/data/cards/plans";
-import type { GameBoardState } from "@/features/game/model/types";
+import type {
+  BoardLocationState,
+  GameBoardState,
+  PlayerState,
+} from "@/features/game/model/types";
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -11,7 +15,7 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-function pickLocations(playerCount: number): LocationData[] {
+function pickLocations(playerCount: number) {
   const pick = (base: string) => {
     const variants = locations.filter((location) => location.id.startsWith(base));
     const match =
@@ -35,7 +39,7 @@ function pickLocations(playerCount: number): LocationData[] {
     return match;
   };
 
-  const coreOrdered: LocationData[] = [
+  const coreOrdered = [
     pick("producer"),
     pick("wholesaler"),
     pick("builder"),
@@ -51,16 +55,58 @@ function pickLocations(playerCount: number): LocationData[] {
   return [...coreOrdered, ...randomAdvanced];
 }
 
-function pickPlans(playerCount: number): PlanData[] {
+function createBoardLocations(playerCount: number): BoardLocationState[] {
+  return pickLocations(playerCount).map((definition) => ({
+    id: definition.id,
+    definition,
+    ownerPlayerId: undefined,
+    isOpen: definition.type !== "Deed",
+    spaces: definition.mintPlacementSpace.map((printedCost, index) => ({
+      index,
+      printedCost,
+      occupiedByPlayerId: undefined,
+      occupiedMintCount: undefined,
+    })),
+  }));
+}
+
+function createPlanDeck() {
+  return shuffle(plans);
+}
+
+function pickPlanSupply(playerCount: number, deck: PlanData[]) {
   const count = playerCount === 1 ? 2 : 3;
-  return shuffle(plans).slice(0, count);
+  return {
+    planSupply: deck.slice(0, count),
+    remainingDeck: deck.slice(count),
+  };
+}
+
+export function createPlayers(playerCount: number): PlayerState[] {
+  return Array.from({ length: playerCount }).map((_, index) => ({
+    id: `p${index + 1}`,
+    name: `Player ${index + 1}`,
+    mint: 0,
+    workersTotal: 3,
+    workersAvailable: 3,
+    workersPlaced: 0,
+    score: 0,
+    isStartingPlayer: index === 0,
+    planIds: [],
+    buildingIds: [],
+  }));
 }
 
 export function setupGame(playerCount: number, seed = Date.now()): GameBoardState {
+  const planDeck = createPlanDeck();
+  const { planSupply, remainingDeck } = pickPlanSupply(playerCount, planDeck);
+
   return {
     playerCount,
     seed,
-    locations: pickLocations(playerCount),
-    planSupply: pickPlans(playerCount),
+    locations: createBoardLocations(playerCount),
+    planSupply,
+    planDeck: remainingDeck,
+    discardPile: [],
   };
 }
