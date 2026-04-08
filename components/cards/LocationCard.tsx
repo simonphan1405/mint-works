@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { parseTextWithIcons } from "../utils/textParser";
+import { parseTextWithIcons } from "../../lib/textParser";
 import { FaCrown, FaScroll, FaLightbulb } from "react-icons/fa";
 import { MintTokenGroup } from "./MintTokenGroup";
 

@@ -1,8 +1,8 @@
 import { MintTokenGroup } from "./MintTokenGroup";
-import { parseTextWithIcons } from "../utils/textParser";
-import { PlanData } from "../data/plans";
+import { parseTextWithIcons } from "../../lib/textParser";
+import { PlanData } from "../../data/cards/plans";
 import { FaLeaf, FaHammer, FaScroll, FaScrewdriver } from "react-icons/fa";
-import { getPlanIcon } from "../utils/planIconMapper";
+import { getPlanIcon } from "../../lib/planIconMapper";
 
 const typeConfig = {
   Culture: { bg: "bg-[#B2C65A]", border: "border-[#A1B846]/40" },

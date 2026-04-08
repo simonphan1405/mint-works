@@ -1,4 +1,4 @@
-import { GameBoard } from "../../../components/GameBoard";
+import { GameBoard } from "../../../components/board/GameBoard";
 
 export default async function Page({
   params,

@@ -3,10 +3,10 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { FaChevronLeft } from "react-icons/fa";
-import { LocationCard, PlanOption } from "./LocationCard";
-import { PlanCard } from "./PlanCard";
-import { locations, LocationData } from "../data/locations";
-import { plans, PlanData } from "../data/plans";
+import { LocationCard, PlanOption } from "../cards/LocationCard";
+import { PlanCard } from "../cards/PlanCard";
+import { locations, LocationData } from "../../data/cards/locations";
+import { plans, PlanData } from "../../data/cards/plans";
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
