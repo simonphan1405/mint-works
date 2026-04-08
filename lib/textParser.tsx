@@ -1,5 +1,5 @@
-import { MintTokenGroup, TokenSize } from "../components/MintTokenGroup";
-import { StarTokenGroup } from "../components/StarTokenGroup";
+import { MintTokenGroup, TokenSize } from "../components/cards/MintTokenGroup";
+import { StarTokenGroup } from "../components/cards/StarTokenGroup";
 import { FaLeaf } from "react-icons/fa";
 
 const leafSizeConfig = {
