@@ -8,7 +8,10 @@ import { PlanCard } from "../cards/PlanCard";
 import { PlayersPanel } from "./PlayersPanel";
 import type { PlanData } from "@/data/cards/plans";
 import type { ClaimedPlanRecord } from "@/features/plans/plansSlice";
-import type { LocationCardViewModel, PlayerState } from "@/features/game/model/types";
+import type {
+  LocationCardViewModel,
+  PlayerState,
+} from "@/features/game/model/types";
 
 export interface GameBoardProps {
   players: number;
@@ -98,8 +101,18 @@ export function GameBoard({
                 }}
                 className="flex items-center gap-1.5 px-3 py-2 rounded-[6px] bg-red-500/20 border border-red-400/50 text-red-300 hover:bg-red-500/30 hover:border-red-400 transition-all duration-200 font-oswald text-sm tracking-wider uppercase"
               >
-                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                <svg
+                  className="w-3 h-3"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
                 </svg>
                 Yes
               </button>
@@ -108,8 +121,18 @@ export function GameBoard({
                 onClick={() => setConfirmReset(false)}
                 className="flex items-center gap-1.5 px-3 py-2 rounded-[6px] bg-[#2B2B2B] border border-white/10 text-[#EAE3CE]/60 hover:text-[#EAE3CE] hover:border-white/30 transition-all duration-200 font-oswald text-sm tracking-wider uppercase"
               >
-                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-3 h-3"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
                 No
               </button>
@@ -139,9 +162,9 @@ export function GameBoard({
         </div>
       </header>
 
-      <main className="flex-1 flex gap-0 overflow-hidden">
-        <section className="w-[55%] min-w-0 p-6 overflow-y-auto border-r border-white/10 flex flex-col items-center">
-          <div className="flex items-center gap-2 mb-5 w-full">
+      <main className="h-[calc(100vh-130px)] min-h-0 flex gap-0 overflow-hidden items-stretch">
+        <section className="w-[55%] h-full self-stretch min-w-0 p-6 overflow-hidden border-r border-white/10 flex flex-col">
+          <div className="flex items-center gap-2 mb-5 w-full shrink-0">
             <span className="w-1.5 h-5 rounded-full bg-[#89AFA7]" />
             <h2 className="font-oswald text-lg tracking-widest uppercase text-[#89AFA7]">
               Locations
@@ -151,100 +174,122 @@ export function GameBoard({
             </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 xl:gap-6 justify-items-center mt-4">
-            {activeLocations.map((loc) => (
-              <div key={`${loc.id}-${seed}`} className="animate-fadeIn">
-                <LocationCard
-                  name={loc.name}
-                  type={loc.type}
-                  mintPlacementSpace={loc.mintPlacementSpace as SpaceOption[]}
-                  playersText={loc.playersText}
-                  flavorText={loc.flavorText}
-                  effect={loc.effect}
-                  ownerLabel={loc.ownerLabel}
-                  ownerEffect={loc.ownerEffect}
-                  planOptions={activePlans.map((p): PlanOption => ({ id: p.id, name: p.name, cost: p.cost }))}
-                  onSpaceClick={(spaceIndex, mintCount) =>
-                    onToggleLocationSpace(loc.runtimeId, spaceIndex, mintCount)
-                  }
-                />
-              </div>
-            ))}
+          <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden rounded-xl border border-white/10 bg-black/10 px-2 py-4">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 xl:gap-6 justify-items-center content-start">
+              {activeLocations.map((loc) => (
+                <div key={`${loc.id}-${seed}`} className="animate-fadeIn">
+                  <LocationCard
+                    name={loc.name}
+                    type={loc.type}
+                    mintPlacementSpace={loc.mintPlacementSpace as SpaceOption[]}
+                    playersText={loc.playersText}
+                    flavorText={loc.flavorText}
+                    effect={loc.effect}
+                    ownerLabel={loc.ownerLabel}
+                    ownerEffect={loc.ownerEffect}
+                    planOptions={activePlans.map(
+                      (p): PlanOption => ({
+                        id: p.id,
+                        name: p.name,
+                        cost: p.cost,
+                      }),
+                    )}
+                    onSpaceClick={(spaceIndex, mintCount) =>
+                      onToggleLocationSpace(
+                        loc.runtimeId,
+                        spaceIndex,
+                        mintCount,
+                      )
+                    }
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
-        <section className="w-[45%] min-w-0 p-6 overflow-y-auto bg-[#18160E] flex flex-col items-center">
-          <div className="flex items-center gap-2 mb-5 w-full">
-            <span className="w-1.5 h-5 rounded-full bg-[#E9B04D]" />
-            <h2 className="font-oswald text-lg tracking-widest uppercase text-[#E9B04D]">
-              Plan Supply
-            </h2>
-            <span className="ml-auto text-white/30 font-oswald text-sm">
-              {activePlans.length} open / {remainingPlanCount} remaining
-            </span>
-          </div>
+        <section className="w-[45%] h-full self-stretch min-w-0 p-6 bg-[#18160E] overflow-hidden">
+          <div className="grid h-full min-h-0 grid-rows-[minmax(0,1fr)_minmax(0,1fr)] gap-6">
+            <div className="min-h-0 flex flex-col overflow-hidden">
+              <div className="flex items-center gap-2 mb-5 w-full shrink-0">
+                <span className="w-1.5 h-5 rounded-full bg-[#E9B04D]" />
+                <h2 className="font-oswald text-lg tracking-widest uppercase text-[#E9B04D]">
+                  Plan Supply
+                </h2>
+                <span className="ml-auto text-white/30 font-oswald text-sm">
+                  {activePlans.length} open / {remainingPlanCount} remaining
+                </span>
+              </div>
 
-          <div className="flex flex-row flex-wrap gap-4 items-center justify-center mt-4">
-            {activePlans.map((plan) => (
-              <button
-                key={`${plan.id}-${seed}`}
-                type="button"
-                className="animate-fadeIn text-left transition-transform hover:scale-[1.02]"
-                onClick={() => onClaimPlan(plan.id, currentPlayerId)}
-                title="Claim this plan for the current player"
-              >
-                <PlanCard
-                  id={plan.id}
-                  name={plan.name}
-                  type={plan.type}
-                  cost={plan.cost}
-                  effect={plan.effect}
-                  starValue={plan.starValue}
-                />
-              </button>
-            ))}
-          </div>
-
-          <div className="w-full mt-8">
-            <div className="flex items-center gap-2 mb-3">
-              <span className="w-1.5 h-5 rounded-full bg-[#B2C65A]" />
-              <h3 className="font-oswald text-base tracking-widest uppercase text-[#B2C65A]">
-                Claimed Plans
-              </h3>
-              <span className="ml-auto text-white/30 font-oswald text-sm">
-                {claimedPlans.length}
-              </span>
+              <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden rounded-xl border border-white/10 bg-black/10 px-2 py-4">
+                <div className="flex flex-row flex-wrap gap-4 items-start justify-center">
+                  {activePlans.map((plan) => (
+                    <button
+                      key={`${plan.id}-${seed}`}
+                      type="button"
+                      className="animate-fadeIn text-left transition-transform hover:scale-[1.02] shrink-0"
+                      onClick={() => onClaimPlan(plan.id, currentPlayerId)}
+                      title="Claim this plan for the current player"
+                    >
+                      <PlanCard
+                        id={plan.id}
+                        name={plan.name}
+                        type={plan.type}
+                        cost={plan.cost}
+                        effect={plan.effect}
+                        starValue={plan.starValue}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
 
-            {claimedPlans.length === 0 ? (
-              <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white/40 text-sm">
-                Chưa có plan nào được lấy.
+            <div className="min-h-0 flex flex-col overflow-hidden">
+              <div className="flex items-center gap-2 mb-3 shrink-0">
+                <span className="w-1.5 h-5 rounded-full bg-[#B2C65A]" />
+                <h3 className="font-oswald text-base tracking-widest uppercase text-[#B2C65A]">
+                  Claimed Plans
+                </h3>
+                <span className="ml-auto text-white/30 font-oswald text-sm">
+                  {claimedPlans.length}
+                </span>
               </div>
-            ) : (
-              <div className="space-y-2">
-                {claimedPlans.map((record, index) => (
-                  <div
-                    key={`${record.playerId}-${record.plan.id}-${index}`}
-                    className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 flex items-center justify-between gap-3"
-                  >
-                    <div>
-                      <div className="text-[#EAE3CE] font-oswald text-base tracking-wide">
-                        {record.plan.name}
-                      </div>
-                      <div className="text-white/40 text-xs uppercase tracking-[0.2em] mt-1">
-                        {record.plan.type}
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-[#89AFA7] text-sm font-oswald uppercase tracking-[0.2em]">
-                        {record.playerId}
-                      </div>
-                      <div className="text-white/40 text-xs mt-1">Cost {record.plan.cost}</div>
-                    </div>
+
+              <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden rounded-xl border border-white/10 bg-black/10 px-3 py-3">
+                {claimedPlans.length === 0 ? (
+                  <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white/40 text-sm">
+                    Chưa có plan nào được lấy.
                   </div>
-                ))}
+                ) : (
+                  <div className="space-y-2 pr-1">
+                    {claimedPlans.map((record, index) => (
+                      <div
+                        key={`${record.playerId}-${record.plan.id}-${index}`}
+                        className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 flex items-center justify-between gap-3"
+                      >
+                        <div>
+                          <div className="text-[#EAE3CE] font-oswald text-base tracking-wide">
+                            {record.plan.name}
+                          </div>
+                          <div className="text-white/40 text-xs uppercase tracking-[0.2em] mt-1">
+                            {record.plan.type}
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-[#89AFA7] text-sm font-oswald uppercase tracking-[0.2em]">
+                            {record.playerId}
+                          </div>
+                          <div className="text-white/40 text-xs mt-1">
+                            Cost {record.plan.cost}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
+            </div>
           </div>
         </section>
       </main>
