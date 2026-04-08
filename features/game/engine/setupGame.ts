@@ -1,5 +1,4 @@
 import { locations } from "@/data/cards/locations";
-import { plans, type PlanData } from "@/data/cards/plans";
 import type {
   BoardLocationState,
   GameBoardState,
@@ -70,18 +69,6 @@ function createBoardLocations(playerCount: number): BoardLocationState[] {
   }));
 }
 
-function createPlanDeck() {
-  return shuffle(plans);
-}
-
-function pickPlanSupply(playerCount: number, deck: PlanData[]) {
-  const count = playerCount === 1 ? 2 : 3;
-  return {
-    planSupply: deck.slice(0, count),
-    remainingDeck: deck.slice(count),
-  };
-}
-
 export function createPlayers(playerCount: number): PlayerState[] {
   return Array.from({ length: playerCount }).map((_, index) => ({
     id: `p${index + 1}`,
@@ -98,15 +85,9 @@ export function createPlayers(playerCount: number): PlayerState[] {
 }
 
 export function setupGame(playerCount: number, seed = Date.now()): GameBoardState {
-  const planDeck = createPlanDeck();
-  const { planSupply, remainingDeck } = pickPlanSupply(playerCount, planDeck);
-
   return {
     playerCount,
     seed,
     locations: createBoardLocations(playerCount),
-    planSupply,
-    planDeck: remainingDeck,
-    discardPile: [],
   };
 }

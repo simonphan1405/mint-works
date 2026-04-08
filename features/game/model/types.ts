@@ -35,9 +35,6 @@ export interface GameBoardState {
   playerCount: number;
   seed: number;
   locations: BoardLocationState[];
-  planSupply: PlanData[];
-  planDeck: PlanData[];
-  discardPile: PlanData[];
 }
 
 export interface GameState {

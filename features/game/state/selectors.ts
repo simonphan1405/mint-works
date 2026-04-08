@@ -3,7 +3,6 @@ import type { GameState, LocationCardViewModel } from "@/features/game/model/typ
 export const selectPlayerCount = (state: GameState) => state.board.playerCount;
 export const selectPlayers = (state: GameState) => state.players;
 export const selectCurrentPlayerId = (state: GameState) => state.currentPlayerId;
-export const selectPlanSupply = (state: GameState) => state.board.planSupply;
 export const selectBoardSeed = (state: GameState) => state.board.seed;
 
 export const selectLocations = (state: GameState): LocationCardViewModel[] =>

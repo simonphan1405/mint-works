@@ -7,6 +7,7 @@ import { LocationCard, PlanOption, SpaceOption } from "../cards/LocationCard";
 import { PlanCard } from "../cards/PlanCard";
 import { PlayersPanel } from "./PlayersPanel";
 import type { PlanData } from "@/data/cards/plans";
+import type { ClaimedPlanRecord } from "@/features/plans/plansSlice";
 import type { LocationCardViewModel, PlayerState } from "@/features/game/model/types";
 
 export interface GameBoardProps {
@@ -14,6 +15,8 @@ export interface GameBoardProps {
   seed: number;
   activeLocations: LocationCardViewModel[];
   activePlans: PlanData[];
+  claimedPlans: ClaimedPlanRecord[];
+  remainingPlanCount: number;
   playerStates: PlayerState[];
   currentPlayerId: string;
   onResetBoard: () => void;
@@ -22,6 +25,7 @@ export interface GameBoardProps {
     spaceIndex: number,
     mintCount?: number,
   ) => void;
+  onClaimPlan: (planId: string, playerId: string) => void;
 }
 
 export function GameBoard({
@@ -29,16 +33,18 @@ export function GameBoard({
   seed,
   activeLocations,
   activePlans,
+  claimedPlans,
+  remainingPlanCount,
   playerStates,
   currentPlayerId,
   onResetBoard,
   onToggleLocationSpace,
+  onClaimPlan,
 }: GameBoardProps) {
   const [confirmReset, setConfirmReset] = useState(false);
 
   return (
     <div className="min-h-screen bg-[#1C1A17] flex flex-col font-sans">
-      {/* ── Top Bar ── */}
       <header className="flex items-center justify-between px-8 py-4 border-b border-white/10 bg-[#16140F]/80 backdrop-blur shrink-0">
         <div className="flex items-center gap-6">
           <Link
@@ -61,7 +67,6 @@ export function GameBoard({
         </div>
 
         <div className="flex items-center gap-4">
-          {/* Player Display (Static) */}
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-[6px] bg-[#89AFA7]/10 border border-[#89AFA7]/20">
             <span className="text-[#89AFA7] text-xs font-oswald tracking-widest uppercase">
               Players
@@ -71,7 +76,15 @@ export function GameBoard({
             </span>
           </div>
 
-          {/* Reset */}
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-[6px] bg-[#E9B04D]/10 border border-[#E9B04D]/20">
+            <span className="text-[#E9B04D] text-xs font-oswald tracking-widest uppercase">
+              Remaining
+            </span>
+            <span className="text-[#EAE3CE] font-oswald text-lg font-bold">
+              {remainingPlanCount}
+            </span>
+          </div>
+
           {confirmReset ? (
             <div className="flex items-center gap-2">
               <span className="text-[#EAE3CE]/50 font-oswald text-sm tracking-wider uppercase">
@@ -126,11 +139,9 @@ export function GameBoard({
         </div>
       </header>
 
-      {/* ── Board ── */}
       <main className="flex-1 flex gap-0 overflow-hidden">
-        {/* Left Part — Location Cards */}
         <section className="w-[55%] min-w-0 p-6 overflow-y-auto border-r border-white/10 flex flex-col items-center">
-          <div className="flex items-center gap-2 mb-5">
+          <div className="flex items-center gap-2 mb-5 w-full">
             <span className="w-1.5 h-5 rounded-full bg-[#89AFA7]" />
             <h2 className="font-oswald text-lg tracking-widest uppercase text-[#89AFA7]">
               Locations
@@ -142,10 +153,7 @@ export function GameBoard({
 
           <div className="grid grid-cols-2 gap-4 xl:gap-6 justify-items-center mt-4">
             {activeLocations.map((loc) => (
-              <div
-                key={`${loc.id}-${seed}`}
-                className="animate-fadeIn"
-              >
+              <div key={`${loc.id}-${seed}`} className="animate-fadeIn">
                 <LocationCard
                   name={loc.name}
                   type={loc.type}
@@ -165,23 +173,25 @@ export function GameBoard({
           </div>
         </section>
 
-        {/* Right Part — Plan Supply */}
         <section className="w-[45%] min-w-0 p-6 overflow-y-auto bg-[#18160E] flex flex-col items-center">
-          <div className="flex items-center gap-2 mb-5">
+          <div className="flex items-center gap-2 mb-5 w-full">
             <span className="w-1.5 h-5 rounded-full bg-[#E9B04D]" />
             <h2 className="font-oswald text-lg tracking-widest uppercase text-[#E9B04D]">
               Plan Supply
             </h2>
             <span className="ml-auto text-white/30 font-oswald text-sm">
-              {activePlans.length} cards
+              {activePlans.length} open / {remainingPlanCount} remaining
             </span>
           </div>
 
           <div className="flex flex-row flex-wrap gap-4 items-center justify-center mt-4">
             {activePlans.map((plan) => (
-              <div
+              <button
                 key={`${plan.id}-${seed}`}
-                className="animate-fadeIn"
+                type="button"
+                className="animate-fadeIn text-left transition-transform hover:scale-[1.02]"
+                onClick={() => onClaimPlan(plan.id, currentPlayerId)}
+                title="Claim this plan for the current player"
               >
                 <PlanCard
                   id={plan.id}
@@ -191,8 +201,50 @@ export function GameBoard({
                   effect={plan.effect}
                   starValue={plan.starValue}
                 />
-              </div>
+              </button>
             ))}
+          </div>
+
+          <div className="w-full mt-8">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="w-1.5 h-5 rounded-full bg-[#B2C65A]" />
+              <h3 className="font-oswald text-base tracking-widest uppercase text-[#B2C65A]">
+                Claimed Plans
+              </h3>
+              <span className="ml-auto text-white/30 font-oswald text-sm">
+                {claimedPlans.length}
+              </span>
+            </div>
+
+            {claimedPlans.length === 0 ? (
+              <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white/40 text-sm">
+                Chưa có plan nào được lấy.
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {claimedPlans.map((record, index) => (
+                  <div
+                    key={`${record.playerId}-${record.plan.id}-${index}`}
+                    className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 flex items-center justify-between gap-3"
+                  >
+                    <div>
+                      <div className="text-[#EAE3CE] font-oswald text-base tracking-wide">
+                        {record.plan.name}
+                      </div>
+                      <div className="text-white/40 text-xs uppercase tracking-[0.2em] mt-1">
+                        {record.plan.type}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-[#89AFA7] text-sm font-oswald uppercase tracking-[0.2em]">
+                        {record.playerId}
+                      </div>
+                      <div className="text-white/40 text-xs mt-1">Cost {record.plan.cost}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
       </main>
