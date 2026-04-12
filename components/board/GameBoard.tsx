@@ -209,7 +209,7 @@ export function GameBoard({
         </section>
 
         <section className="w-[45%] h-full self-stretch min-w-0 p-6 bg-[#18160E] overflow-hidden">
-          <div className="grid h-full min-h-0 grid-rows-[minmax(0,1fr)_minmax(0,1fr)] gap-6">
+          <div className="grid h-full min-h-0 grid-rows-[minmax(0,1.2fr)_minmax(0,1fr)] gap-6">
             <div className="min-h-0 flex flex-col overflow-hidden">
               <div className="flex items-center gap-2 mb-5 w-full shrink-0">
                 <span className="w-1.5 h-5 rounded-full bg-[#E9B04D]" />
