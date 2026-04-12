@@ -1,5 +1,4 @@
 import type { LocationData } from "@/data/cards/locations";
-import type { PlanData } from "@/data/cards/plans";
 
 export type GamePhase = "setup" | "ready" | "gameEnd";
 
