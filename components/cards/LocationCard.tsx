@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { parseTextWithIcons } from "../../lib/textParser";
 import { FaCrown, FaScroll, FaLightbulb } from "react-icons/fa";
 import { MintTokenGroup } from "./MintTokenGroup";
@@ -171,6 +172,109 @@ export function LocationCard({
 
 type DottedCircleState = "empty" | "selecting" | "occupied";
 
+// ─── Plan Selection Modal ────────────────────────────────────────────────────
+
+function PlanSelectModal({
+  plans,
+  onSelect,
+  onClose,
+}: {
+  plans: PlanOption[];
+  onSelect: (cost: number) => void;
+  onClose: () => void;
+}) {
+  // Close on Escape key
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [onClose]);
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center"
+      aria-modal="true"
+      role="dialog"
+      aria-label="Select a plan"
+    >
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+      />
+
+      {/* Modal panel */}
+      <div
+        className="relative z-10 w-[340px] bg-[#1C1A17] border border-[#E9B04D]/30 rounded-[12px] shadow-[0_20px_60px_rgba(0,0,0,0.8)] overflow-hidden"
+        style={{ animation: "fadeInScale 0.18s ease-out" }}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/10 bg-[#E9B04D]/5">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#E9B04D] shadow-[0_0_6px_#E9B04D]" />
+            <span className="text-[#E9B04D] font-oswald text-sm tracking-widest uppercase">
+              Select Plan
+            </span>
+          </div>
+          <button
+            onClick={onClose}
+            className="w-6 h-6 flex items-center justify-center rounded-full text-white/30 hover:text-white/70 hover:bg-white/10 transition-all duration-150"
+            aria-label="Close"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} className="w-3.5 h-3.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Subtitle */}
+        <p className="px-5 pt-3 pb-1 text-white/40 text-xs font-sans tracking-wide">
+          Place mints equal to the selected plan&apos;s cost.
+        </p>
+
+        {/* Plan list */}
+        <div className="px-3 pb-3 pt-1 flex flex-col gap-1 max-h-[320px] overflow-y-auto">
+          {plans.length === 0 ? (
+            <div className="px-3 py-4 text-center text-white/30 font-oswald text-sm tracking-wide">
+              No plans in the supply
+            </div>
+          ) : (
+            plans.map((plan) => (
+              <button
+                key={plan.id}
+                onClick={() => onSelect(plan.cost)}
+                className="group w-full flex items-center justify-between px-4 py-3 rounded-[8px] bg-white/5 hover:bg-[#E9B04D]/10 border border-transparent hover:border-[#E9B04D]/30 transition-all duration-200 text-left"
+              >
+                <span className="text-[#EAE3CE] font-oswald text-base tracking-wide group-hover:text-[#E9B04D] transition-colors">
+                  {plan.name}
+                </span>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="text-white/40 font-oswald text-xs tracking-widest uppercase">
+                    Cost
+                  </span>
+                  <MintTokenGroup count={plan.cost} size="sm" />
+                </div>
+              </button>
+            ))
+          )}
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes fadeInScale {
+          from { opacity: 0; transform: scale(0.94); }
+          to   { opacity: 1; transform: scale(1); }
+        }
+      `}</style>
+    </div>,
+    document.body,
+  );
+}
+
+// ─── DottedCircle ────────────────────────────────────────────────────────────
+
 export const DottedCircle = ({
   number,
   occupied = false,
@@ -189,35 +293,24 @@ export const DottedCircle = ({
 
   const [state, setState] = useState<DottedCircleState>(occupied ? "occupied" : "empty");
   const [occupiedCount, setOccupiedCount] = useState(occupiedMintCount ?? 0);
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setState(occupied ? "occupied" : "empty");
     setOccupiedCount(occupiedMintCount ?? 0);
   }, [occupied, occupiedMintCount]);
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    if (state !== "selecting") return;
-    const handler = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setState(occupied ? "occupied" : "empty");
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [occupied, state]);
-
   const handleClick = () => {
     if (!isWildcard) {
+      // Fixed-cost space: simple toggle
       const nextOccupied = state === "empty";
       setState(nextOccupied ? "occupied" : "empty");
       onChange?.();
       return;
     }
-    // Wildcard: empty → selecting, occupied → empty
-    if (state === "empty") setState("selecting");
-    else if (state === "occupied") {
+    // Wildcard: empty → show modal, occupied → clear
+    if (state === "empty") {
+      setState("selecting");
+    } else if (state === "occupied") {
       setState("empty");
       setOccupiedCount(0);
       onChange?.();
@@ -230,12 +323,17 @@ export const DottedCircle = ({
     onChange?.(cost);
   };
 
+  const handleCloseModal = () => {
+    setState("empty");
+  };
+
   const count = isWildcard ? occupiedCount : fixedCount;
   const isOccupied = state === "occupied";
   const isSelecting = state === "selecting";
 
   return (
-    <div className="relative flex items-center justify-center mx-auto" ref={dropdownRef}>
+    <div className="relative flex items-center justify-center mx-auto">
+      {/* The circle button */}
       <div
         className={`w-[32px] h-[32px] rounded-full border-2 border-dotted flex items-center justify-center cursor-pointer relative transition-all duration-200 hover:scale-110 ${
           isSelecting
@@ -261,35 +359,13 @@ export const DottedCircle = ({
         )}
       </div>
 
-      {/* Plan picker dropdown — only for wildcard spaces */}
+      {/* Modal — only for wildcard spaces when selecting */}
       {isSelecting && (
-        <div className="fixed z-9999 bg-[#1C1A17] border border-[#E9B04D]/40 rounded-[8px] shadow-[0_8px_24px_rgba(0,0,0,0.6)] overflow-hidden min-w-[160px]" style={{ top: dropdownRef.current ? dropdownRef.current.getBoundingClientRect().top + dropdownRef.current.getBoundingClientRect().height / 2 + 'px' : 0, left: dropdownRef.current ? dropdownRef.current.getBoundingClientRect().right + 8 + 'px' : 0, transform: 'translateY(-50%)' }}>
-          <div className="px-3 py-1.5 border-b border-white/10">
-            <span className="text-[#E9B04D] font-oswald text-[10px] tracking-widest uppercase">
-              Select Plan
-            </span>
-          </div>
-          {planOptions.length === 0 ? (
-            <div className="px-3 py-2 text-white/40 font-oswald text-xs">
-              No plans available
-            </div>
-          ) : (
-            planOptions.map((plan) => (
-              <button
-                key={plan.id}
-                onClick={(e) => { e.stopPropagation(); handleSelectPlan(plan.cost); }}
-                className="w-full flex items-center justify-between px-3 py-2 hover:bg-[#E9B04D]/10 transition-colors duration-150 group gap-3"
-              >
-                <span className="text-[#EAE3CE] font-oswald text-sm group-hover:text-[#E9B04D] transition-colors whitespace-nowrap">
-                  {plan.name}
-                </span>
-                <div className="flex items-center gap-1 shrink-0">
-                  <MintTokenGroup count={plan.cost} size="xs" />
-                </div>
-              </button>
-            ))
-          )}
-        </div>
+        <PlanSelectModal
+          plans={planOptions}
+          onSelect={handleSelectPlan}
+          onClose={handleCloseModal}
+        />
       )}
     </div>
   );
