@@ -9,7 +9,6 @@ import {
   selectCurrentPlayerId,
   selectLastAction,
   selectLocations,
-  selectLog,
   selectPendingTurn,
   selectPhase,
   selectPlayerCount,
@@ -53,7 +52,6 @@ export function GameBoardContainer() {
       round={selectRound(state)}
       winnerPlayerId={selectWinnerPlayerId(state)}
       lastAction={selectLastAction(state)}
-      log={selectLog(state)}
       seed={selectBoardSeed(state)}
       onResetBoard={() => dispatch({ type: "RESET_BOARD" })}
       onToggleLocationSpace={(locationId, spaceIndex, mintCount) =>

@@ -8,7 +8,6 @@ export const selectPhase = (state: GameState) => state.phase;
 export const selectRound = (state: GameState) => state.round;
 export const selectWinnerPlayerId = (state: GameState) => state.winnerPlayerId;
 export const selectLastAction = (state: GameState) => state.lastAction;
-export const selectLog = (state: GameState) => state.log;
 export const selectPendingTurn = (state: GameState) => state.pendingTurn;
 
 export const selectLocations = (state: GameState): LocationCardViewModel[] => {

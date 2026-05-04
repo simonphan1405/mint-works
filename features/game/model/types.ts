@@ -40,11 +40,6 @@ export interface BoardLocationState {
   isOpen: boolean;
 }
 
-export interface TurnLogEntry {
-  id: string;
-  text: string;
-}
-
 export interface PendingPlacement {
   locationId: string;
   spaceIndex: number;
@@ -74,7 +69,6 @@ export interface GameState {
   board: GameBoardState;
   winnerPlayerId?: string;
   lastAction?: string;
-  log: TurnLogEntry[];
 }
 
 export interface LocationCardSpaceViewModel {
