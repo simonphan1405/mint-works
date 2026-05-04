@@ -6,6 +6,7 @@ export type GameAction =
       locationId: string;
       spaceIndex: number;
       mintCount?: number;
+      selectedPlanId?: string;
     }
   | { type: "REQUEST_PASS_TURN" }
   | { type: "CONFIRM_TURN" }

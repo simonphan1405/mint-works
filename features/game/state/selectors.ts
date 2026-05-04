@@ -9,11 +9,17 @@ export const selectRound = (state: GameState) => state.round;
 export const selectWinnerPlayerId = (state: GameState) => state.winnerPlayerId;
 export const selectLastAction = (state: GameState) => state.lastAction;
 export const selectPendingTurn = (state: GameState) => state.pendingTurn;
+export const selectSupplyPlans = (state: GameState) => state.supplyPlans;
+export const selectRemainingPlanCount = (state: GameState) => state.remainingPlans.length;
 
 export const selectLocations = (state: GameState): LocationCardViewModel[] => {
   const currentPlayer = state.players.find((player) => player.id === state.currentPlayerId);
   const availableMint = currentPlayer?.mint ?? 0;
   const hasPendingPlacement = state.pendingTurn.placements.length > 0;
+
+  const tempAgencyPending = state.pendingTurn.placements.find(
+    (placement) => placement.locationId === "temp_agency",
+  );
 
   return state.board.locations.map((location) => ({
     ...location.definition,
@@ -36,12 +42,16 @@ export const selectLocations = (state: GameState): LocationCardViewModel[] => {
 
       const canAfford = availableMint >= cost;
       const occupied = Boolean(space.occupiedByPlayerId || pendingPlacement);
+      const canUseWithTempAgency =
+        Boolean(tempAgencyPending) &&
+        location.id !== "temp_agency" &&
+        Boolean(space.occupiedByPlayerId);
       const isClickable =
         state.phase === "action" &&
         location.isOpen &&
-        (!space.occupiedByPlayerId || Boolean(pendingPlacement)) &&
-        (pendingPlacement || !hasPendingPlacement) &&
-        (pendingPlacement ? true : canAfford);
+        ((canUseWithTempAgency || !space.occupiedByPlayerId || Boolean(pendingPlacement))) &&
+        (pendingPlacement || !hasPendingPlacement || canUseWithTempAgency) &&
+        (pendingPlacement ? true : canUseWithTempAgency || canAfford);
 
       return {
         displayValue: occupied

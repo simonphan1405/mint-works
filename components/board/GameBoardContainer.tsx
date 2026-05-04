@@ -1,9 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import { GameBoard } from "@/components/board/GameBoard";
 import { useGame } from "@/features/game/hooks/useGame";
-import { usePlansState } from "@/features/plans/hooks";
 import {
   selectBoardSeed,
   selectCurrentPlayerId,
@@ -13,38 +11,24 @@ import {
   selectPhase,
   selectPlayerCount,
   selectPlayers,
+  selectRemainingPlanCount,
   selectRound,
+  selectSupplyPlans,
   selectWinnerPlayerId,
 } from "@/features/game/state/selectors";
 
 export function GameBoardContainer() {
   const { state, dispatch } = useGame();
-  const {
-    supplyPlans,
-    claimedPlans,
-    remainingPlans,
-    claimPlanForPlayer,
-  } = usePlansState();
-
-  useEffect(() => {
-    const statePlanIds = new Set(
-      state.players.flatMap((player) => player.claimedPlans.map((plan) => plan.id)),
-    );
-
-    claimedPlans.forEach((record) => {
-      if (!statePlanIds.has(record.plan.id)) {
-        claimPlanForPlayer(record.plan.id, record.playerId);
-      }
-    });
-  }, [claimPlanForPlayer, claimedPlans, state.players]);
 
   return (
     <GameBoard
       players={selectPlayerCount(state)}
       activeLocations={selectLocations(state)}
-      activePlans={supplyPlans}
-      claimedPlans={claimedPlans}
-      remainingPlanCount={remainingPlans.length}
+      activePlans={selectSupplyPlans(state)}
+      claimedPlans={state.players.flatMap((player) =>
+        player.claimedPlans.map((plan) => ({ playerId: player.id, plan })),
+      )}
+      remainingPlanCount={selectRemainingPlanCount(state)}
       playerStates={selectPlayers(state)}
       currentPlayerId={selectCurrentPlayerId(state)}
       pendingTurn={selectPendingTurn(state)}
@@ -54,12 +38,13 @@ export function GameBoardContainer() {
       lastAction={selectLastAction(state)}
       seed={selectBoardSeed(state)}
       onResetBoard={() => dispatch({ type: "RESET_BOARD" })}
-      onToggleLocationSpace={(locationId, spaceIndex, mintCount) =>
+      onToggleLocationSpace={(locationId, spaceIndex, mintCount, selectedPlanId) =>
         dispatch({
           type: "TOGGLE_LOCATION_SPACE",
           locationId,
           spaceIndex,
           mintCount,
+          selectedPlanId,
         })
       }
       onRequestPassTurn={() => dispatch({ type: "REQUEST_PASS_TURN" })}

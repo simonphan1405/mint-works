@@ -44,6 +44,9 @@ export interface PendingPlacement {
   locationId: string;
   spaceIndex: number;
   mintCount: number;
+  selectedPlanId?: string;
+  targetLocationId?: string;
+  targetSpaceIndex?: number;
 }
 
 export interface PendingTurnState {
@@ -67,6 +70,8 @@ export interface GameState {
   pendingTurn: PendingTurnState;
   players: PlayerState[];
   board: GameBoardState;
+  supplyPlans: PlanData[];
+  remainingPlans: PlanData[];
   winnerPlayerId?: string;
   lastAction?: string;
 }

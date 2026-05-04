@@ -7,7 +7,6 @@ import { LocationCard, PlanOption, SpaceOption } from "../cards/LocationCard";
 import { PlanCard } from "../cards/PlanCard";
 import { PlayersPanel } from "./PlayersPanel";
 import type { PlanData } from "@/data/cards/plans";
-import type { ClaimedPlanRecord } from "@/features/plans/plansSlice";
 import type {
   GamePhase,
   LocationCardViewModel,
@@ -25,7 +24,7 @@ export interface GameBoardProps {
   pendingTurn: PendingTurnState;
   activeLocations: LocationCardViewModel[];
   activePlans: PlanData[];
-  claimedPlans: ClaimedPlanRecord[];
+  claimedPlans: { playerId: string; plan: PlanData }[];
   remainingPlanCount: number;
   playerStates: PlayerState[];
   currentPlayerId: string;
@@ -34,6 +33,7 @@ export interface GameBoardProps {
     locationId: string,
     spaceIndex: number,
     mintCount?: number,
+    planId?: string,
   ) => void;
   onRequestPassTurn: () => void;
   onConfirmTurn: () => void;
@@ -259,11 +259,12 @@ export function GameBoard({
                         cost: p.cost,
                       }),
                     )}
-                    onSpaceClick={(spaceIndex, mintCount) =>
+                    onSpaceClick={(spaceIndex, mintCount, planId) =>
                       onToggleLocationSpace(
                         loc.runtimeId,
                         spaceIndex,
                         mintCount,
+                        planId,
                       )
                     }
                   />

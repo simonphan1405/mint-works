@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { parseTextWithIcons } from "../../lib/textParser";
 import { FaCrown, FaScroll, FaLightbulb } from "react-icons/fa";
@@ -32,7 +32,7 @@ export interface LocationCardProps {
   ownerLabel?: string;
   ownerEffect?: string;
   planOptions?: PlanOption[];
-  onSpaceClick?: (spaceIndex: number, mintCount?: number) => void;
+  onSpaceClick?: (spaceIndex: number, mintCount?: number, planId?: string) => void;
 }
 
 const renderEffectRow = (text: string) => (
@@ -83,7 +83,7 @@ export function LocationCard({
                 allowsOccupiedPlacement={space.allowsOccupiedPlacement}
                 requiresSelfPlacementFirst={space.requiresSelfPlacementFirst}
                 isClickable={space.isClickable}
-                onChange={(mintCount) => onSpaceClick?.(i, mintCount)}
+                onChange={(mintCount, planId) => onSpaceClick?.(i, mintCount, planId)}
               />
             ))}
           </div>
@@ -173,7 +173,7 @@ function PlanSelectModal({
   onClose,
 }: {
   plans: PlanOption[];
-  onSelect: (cost: number) => void;
+  onSelect: (cost: number, planId: string) => void;
   onClose: () => void;
 }) {
   useEffect(() => {
@@ -231,7 +231,7 @@ function PlanSelectModal({
             plans.map((plan) => (
               <button
                 key={plan.id}
-                onClick={() => onSelect(plan.cost)}
+                onClick={() => onSelect(plan.cost, plan.id)}
                 className="group w-full flex items-center justify-between px-4 py-3 rounded-[8px] bg-white/5 hover:bg-[#E9B04D]/10 border border-transparent hover:border-[#E9B04D]/30 transition-all duration-200 text-left"
               >
                 <span className="text-[#EAE3CE] font-oswald text-base tracking-wide group-hover:text-[#E9B04D] transition-colors">
@@ -273,7 +273,7 @@ export const DottedCircle = ({
   occupied?: boolean;
   occupiedMintCount?: number;
   planOptions?: PlanOption[];
-  onChange?: (mintCount?: number) => void;
+  onChange?: (mintCount?: number, planId?: string) => void;
   allowsOccupiedPlacement?: boolean;
   requiresSelfPlacementFirst?: boolean;
   isClickable?: boolean;
@@ -282,13 +282,9 @@ export const DottedCircle = ({
   const usesPlanSelection = number === "*";
   const fixedCount = isWildcard ? 0 : (parseInt(String(number), 10) || 1);
 
-  const [state, setState] = useState<DottedCircleState>(occupied ? "occupied" : "empty");
+  const [state, setState] = useState<DottedCircleState>("empty");
   const [occupiedCount, setOccupiedCount] = useState(occupiedMintCount ?? 0);
-
-  useEffect(() => {
-    setState(occupied ? "occupied" : "empty");
-    setOccupiedCount(occupiedMintCount ?? 0);
-  }, [occupied, occupiedMintCount]);
+  const currentState: DottedCircleState = occupied ? "occupied" : state;
 
   const handleClick = () => {
     if (!isClickable && !occupied) {
@@ -311,24 +307,24 @@ export const DottedCircle = ({
       return;
     }
 
-    if (state === "empty") {
+    if (currentState === "empty") {
       setState("selecting");
     }
   };
 
-  const handleSelectPlan = (cost: number) => {
+  const handleSelectPlan = (cost: number, planId: string) => {
     setOccupiedCount(cost);
     setState("occupied");
-    onChange?.(cost);
+    onChange?.(cost, planId);
   };
 
   const handleCloseModal = () => {
     setState("empty");
   };
 
-  const count = isWildcard ? occupiedCount : fixedCount;
-  const isOccupied = state === "occupied";
-  const isSelecting = state === "selecting";
+  const count = isWildcard ? (occupied ? (occupiedMintCount ?? occupiedCount) : occupiedCount) : fixedCount;
+  const isOccupied = currentState === "occupied";
+  const isSelecting = currentState === "selecting";
 
   return (
     <div className="relative flex items-center justify-center mx-auto">
