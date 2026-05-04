@@ -19,5 +19,7 @@ export const selectLocations = (state: GameState): LocationCardViewModel[] =>
         : space.printedCost,
       occupied: Boolean(space.occupiedByPlayerId),
       occupiedMintCount: space.occupiedMintCount,
+      allowsOccupiedPlacement: space.printedCost === "*" || space.printedCost === "1+",
+      requiresSelfPlacementFirst: space.printedCost === "1+",
     })),
   }));

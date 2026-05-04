@@ -16,6 +16,8 @@ export interface SpaceOption {
   displayValue: string | number;
   occupied?: boolean;
   occupiedMintCount?: number;
+  allowsOccupiedPlacement?: boolean;
+  requiresSelfPlacementFirst?: boolean;
 }
 
 export interface LocationCardProps {
@@ -79,6 +81,8 @@ export function LocationCard({
                 occupied={space.occupied}
                 occupiedMintCount={space.occupiedMintCount}
                 planOptions={planOptions}
+                allowsOccupiedPlacement={space.allowsOccupiedPlacement}
+                requiresSelfPlacementFirst={space.requiresSelfPlacementFirst}
                 onChange={(mintCount) => onSpaceClick?.(i, mintCount)}
               />
             ))}
@@ -281,14 +285,19 @@ export const DottedCircle = ({
   occupiedMintCount,
   planOptions = [],
   onChange,
+  allowsOccupiedPlacement = false,
+  requiresSelfPlacementFirst = false,
 }: {
   number: string | number;
   occupied?: boolean;
   occupiedMintCount?: number;
   planOptions?: PlanOption[];
   onChange?: (mintCount?: number) => void;
+  allowsOccupiedPlacement?: boolean;
+  requiresSelfPlacementFirst?: boolean;
 }) => {
   const isWildcard = number === "*" || number === "1+";
+  const usesPlanSelection = number === "*";
   const fixedCount = isWildcard ? 0 : (parseInt(String(number), 10) || 1);
 
   const [state, setState] = useState<DottedCircleState>(occupied ? "occupied" : "empty");
@@ -301,13 +310,25 @@ export const DottedCircle = ({
 
   const handleClick = () => {
     if (!isWildcard) {
-      // Fixed-cost space: simple toggle
       const nextOccupied = state === "empty";
       setState(nextOccupied ? "occupied" : "empty");
       onChange?.();
       return;
     }
-    // Wildcard: empty → show modal, occupied → clear
+
+    if (requiresSelfPlacementFirst) {
+      if (state === "empty") {
+        setState("occupied");
+        setOccupiedCount(1);
+        onChange?.(1);
+      } else if (state === "occupied") {
+        setState("empty");
+        setOccupiedCount(0);
+        onChange?.();
+      }
+      return;
+    }
+
     if (state === "empty") {
       setState("selecting");
     } else if (state === "occupied") {
@@ -352,7 +373,7 @@ export const DottedCircle = ({
           <span
             className={`text-[22px] font-oswald font-medium drop-shadow-sm leading-none ${
               isSelecting ? "text-[#E9B04D]" : "text-[#EAE3CE]/90"
-            } ${number === "*" ? "mt-2" : "mb-0.5"}`}
+            } ${usesPlanSelection ? "mt-2" : "mb-0.5"}`}
           >
             {number}
           </span>
@@ -360,7 +381,7 @@ export const DottedCircle = ({
       </div>
 
       {/* Modal — only for wildcard spaces when selecting */}
-      {isSelecting && (
+      {usesPlanSelection && isSelecting && (
         <PlanSelectModal
           plans={planOptions}
           onSelect={handleSelectPlan}

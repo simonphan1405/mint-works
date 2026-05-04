@@ -51,6 +51,14 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
               };
             }
 
+            if (space.printedCost === "1+") {
+              return {
+                ...space,
+                occupiedByPlayerId: currentPlayer.id,
+                occupiedMintCount: 1,
+              };
+            }
+
             return {
               ...space,
               occupiedByPlayerId: currentPlayer.id,
