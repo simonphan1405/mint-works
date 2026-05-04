@@ -12,13 +12,6 @@ import type {
 } from "@/features/game/model/types";
 import { createPlayers, setupGame } from "@/features/game/engine/setupGame";
 
-function createLogEntry(text: string) {
-  return {
-    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    text,
-  };
-}
-
 function createEmptyPendingTurn(playerId: string): PendingTurnState {
   return {
     playerId,
@@ -321,10 +314,6 @@ function applyUpkeep(state: GameState): GameState {
       players,
       pendingTurn: createEmptyPendingTurn(winner.id),
       lastAction: `${winner.name} wins with ${winner.score} stars.`,
-      log: [
-        createLogEntry(`${winner.name} wins with ${winner.score} stars.`),
-        ...state.log,
-      ].slice(0, 12),
     };
   }
 
@@ -344,10 +333,6 @@ function applyUpkeep(state: GameState): GameState {
       locations: clearAllLocationSpaces(state),
     },
     lastAction: `Upkeep complete. Round ${state.round + 1} begins with ${players.find((p) => p.id === startingPlayerId)?.name ?? startingPlayerId}.`,
-    log: [
-      createLogEntry(`Upkeep complete. Round ${state.round + 1} begins.`),
-      ...state.log,
-    ].slice(0, 12),
   };
 }
 
@@ -392,7 +377,6 @@ export function createGameState(playerCount: number, seed?: number): GameState {
     board: setupGame(playerCount, seed),
     winnerPlayerId: undefined,
     lastAction: "Game started.",
-    log: [createLogEntry("Game started.")],
   };
 }
 
@@ -403,12 +387,6 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
 
     case "RESET_BOARD":
       return createGameState(state.board.playerCount);
-
-    case "CLEAR_LOG":
-      return {
-        ...state,
-        log: [],
-      };
 
     case "CLEAR_PENDING_TURN":
       return {
@@ -519,10 +497,6 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
             consecutivePasses: nextConsecutivePasses,
             pendingTurn: createEmptyPendingTurn(currentPlayer.id),
             lastAction: `${currentPlayer.name} passes. Everyone passes in sequence, entering upkeep.`,
-            log: [
-              createLogEntry(`${currentPlayer.name} passes. Everyone passes in sequence, entering upkeep.`),
-              ...state.log,
-            ].slice(0, 12),
           });
         }
 
@@ -533,7 +507,6 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           currentPlayerId: nextPlayerId,
           pendingTurn: createEmptyPendingTurn(nextPlayerId),
           lastAction: `${currentPlayer.name} passes.`,
-          log: [createLogEntry(`${currentPlayer.name} passes.`), ...state.log].slice(0, 12),
         };
       }
 
@@ -591,7 +564,6 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         consecutivePasses: 0,
         pendingTurn: createEmptyPendingTurn(nextPlayerId),
         lastAction: latestMessage,
-        log: [createLogEntry(latestMessage), ...state.log].slice(0, 12),
       };
     }
 

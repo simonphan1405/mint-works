@@ -13,7 +13,6 @@ import type {
   LocationCardViewModel,
   PendingTurnState,
   PlayerState,
-  TurnLogEntry,
 } from "@/features/game/model/types";
 
 export interface GameBoardProps {
@@ -23,7 +22,6 @@ export interface GameBoardProps {
   round: number;
   winnerPlayerId?: string;
   lastAction?: string;
-  log: TurnLogEntry[];
   pendingTurn: PendingTurnState;
   activeLocations: LocationCardViewModel[];
   activePlans: PlanData[];
@@ -50,7 +48,6 @@ export function GameBoard({
   round,
   winnerPlayerId,
   lastAction,
-  log,
   pendingTurn,
   activeLocations,
   activePlans,
@@ -279,7 +276,7 @@ export function GameBoard({
         </section>
 
         <section className="w-[45%] h-full self-stretch min-w-0 p-6 bg-[#18160E] overflow-hidden">
-          <div className="grid h-full min-h-0 grid-rows-[minmax(0,1.05fr)_minmax(0,0.95fr)_minmax(0,0.9fr)] gap-6">
+          <div className="grid h-full min-h-0 grid-rows-[minmax(0,1.15fr)_minmax(0,0.85fr)] gap-6">
             <div className="min-h-0 flex flex-col overflow-hidden">
               <div className="flex items-center gap-2 mb-5 w-full shrink-0">
                 <span className="w-1.5 h-5 rounded-full bg-[#E9B04D]" />
@@ -362,36 +359,6 @@ export function GameBoard({
               </div>
             </div>
 
-            <div className="min-h-0 flex flex-col overflow-hidden">
-              <div className="flex items-center gap-2 mb-3 shrink-0">
-                <span className="w-1.5 h-5 rounded-full bg-[#89AFA7]" />
-                <h3 className="font-oswald text-base tracking-widest uppercase text-[#89AFA7]">
-                  Action Log
-                </h3>
-                <span className="ml-auto text-white/30 font-oswald text-sm">
-                  {log.length}
-                </span>
-              </div>
-
-              <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden rounded-xl border border-white/10 bg-black/10 px-3 py-3">
-                {log.length === 0 ? (
-                  <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white/40 text-sm">
-                    Chưa có hành động nào.
-                  </div>
-                ) : (
-                  <div className="space-y-2 pr-1">
-                    {log.map((entry) => (
-                      <div
-                        key={entry.id}
-                        className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-[#EAE3CE] text-sm"
-                      >
-                        {entry.text}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
           </div>
         </section>
       </main>

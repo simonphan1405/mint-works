@@ -9,5 +9,4 @@ export type GameAction =
     }
   | { type: "REQUEST_PASS_TURN" }
   | { type: "CONFIRM_TURN" }
-  | { type: "CLEAR_PENDING_TURN" }
-  | { type: "CLEAR_LOG" };
+  | { type: "CLEAR_PENDING_TURN" };
