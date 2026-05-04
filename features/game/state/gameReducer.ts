@@ -449,8 +449,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       }
 
       const cost = getSpaceCost(targetSpace, action.mintCount);
-      const spentMint = getPendingSpentMint(pendingTurn.placements);
-      const availableMint = currentPlayer.mint - spentMint;
+      const availableMint = currentPlayer.mint;
 
       if (cost <= 0 || availableMint < cost) {
         return state;
@@ -462,7 +461,6 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           playerId: currentPlayer.id,
           passRequested: false,
           placements: [
-            ...pendingTurn.placements,
             {
               locationId: action.locationId,
               spaceIndex: action.spaceIndex,
