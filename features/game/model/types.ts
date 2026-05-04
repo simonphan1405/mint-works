@@ -48,6 +48,8 @@ export interface LocationCardSpaceViewModel {
   displayValue: string | number;
   occupied: boolean;
   occupiedMintCount?: number;
+  allowsOccupiedPlacement?: boolean;
+  requiresSelfPlacementFirst?: boolean;
 }
 
 export interface LocationCardViewModel
