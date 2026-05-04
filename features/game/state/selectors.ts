@@ -12,11 +12,8 @@ export const selectPendingTurn = (state: GameState) => state.pendingTurn;
 
 export const selectLocations = (state: GameState): LocationCardViewModel[] => {
   const currentPlayer = state.players.find((player) => player.id === state.currentPlayerId);
-  const pendingSpentMint = state.pendingTurn.placements.reduce(
-    (total, placement) => total + placement.mintCount,
-    0,
-  );
-  const availableMint = (currentPlayer?.mint ?? 0) - pendingSpentMint;
+  const availableMint = currentPlayer?.mint ?? 0;
+  const hasPendingPlacement = state.pendingTurn.placements.length > 0;
 
   return state.board.locations.map((location) => ({
     ...location.definition,
@@ -43,6 +40,7 @@ export const selectLocations = (state: GameState): LocationCardViewModel[] => {
         state.phase === "action" &&
         location.isOpen &&
         (!space.occupiedByPlayerId || Boolean(pendingPlacement)) &&
+        (pendingPlacement || !hasPendingPlacement) &&
         (pendingPlacement ? true : canAfford);
 
       return {
