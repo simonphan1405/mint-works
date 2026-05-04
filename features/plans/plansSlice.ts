@@ -65,6 +65,21 @@ const plansSlice = createSlice({
         state.supplyPlans.push(replacement);
       }
     },
+
+    removeClaimedPlanForPlayer: (
+      state,
+      action: PayloadAction<{ planId: string; playerId: string }>,
+    ) => {
+      const claimIndex = state.claimedPlans.findIndex(
+        (record) =>
+          record.playerId === action.payload.playerId &&
+          record.plan.id === action.payload.planId,
+      );
+
+      if (claimIndex !== -1) {
+        state.claimedPlans.splice(claimIndex, 1);
+      }
+    },
   },
 });
 
@@ -72,6 +87,7 @@ export const {
   initializePlansState,
   resetPlansState,
   claimPlan,
+  removeClaimedPlanForPlayer,
 } = plansSlice.actions;
 
 export const plansReducer = plansSlice.reducer;

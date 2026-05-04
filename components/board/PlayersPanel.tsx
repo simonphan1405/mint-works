@@ -33,27 +33,32 @@ export function PlayersPanel({
                 <span className="font-oswald text-lg tracking-wide text-[#EAE3CE]">
                   {player.name}
                 </span>
-                {isCurrent && (
-                  <span className="text-[10px] font-oswald tracking-[0.25em] uppercase text-[#89AFA7]">
-                    Current
-                  </span>
-                )}
+                <div className="flex items-center gap-2">
+                  {player.isStartingPlayer && (
+                    <span className="text-[10px] font-oswald tracking-[0.2em] uppercase text-[#E9B04D]">
+                      First
+                    </span>
+                  )}
+                  {isCurrent && (
+                    <span className="text-[10px] font-oswald tracking-[0.25em] uppercase text-[#89AFA7]">
+                      Current
+                    </span>
+                  )}
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-y-2 text-sm">
                 <span className="text-white/45 uppercase tracking-wide">Mint</span>
                 <span className="text-[#EAE3CE] text-right">{player.mint}</span>
 
-                <span className="text-white/45 uppercase tracking-wide">Workers</span>
-                <span className="text-[#EAE3CE] text-right">
-                  {player.workersAvailable}/{player.workersTotal}
-                </span>
-
-                <span className="text-white/45 uppercase tracking-wide">Placed</span>
-                <span className="text-[#EAE3CE] text-right">{player.workersPlaced}</span>
+                <span className="text-white/45 uppercase tracking-wide">Stars</span>
+                <span className="text-[#EAE3CE] text-right">{player.score}</span>
 
                 <span className="text-white/45 uppercase tracking-wide">Plans</span>
-                <span className="text-[#EAE3CE] text-right">{player.planIds.length}</span>
+                <span className="text-[#EAE3CE] text-right">{player.claimedPlans.length}</span>
+
+                <span className="text-white/45 uppercase tracking-wide">Buildings</span>
+                <span className="text-[#EAE3CE] text-right">{player.buildings.length}</span>
               </div>
             </div>
           );
