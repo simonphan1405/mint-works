@@ -38,7 +38,6 @@ export interface GameBoardProps {
   onRequestPassTurn: () => void;
   onConfirmTurn: () => void;
   onClearPendingTurn: () => void;
-  onClaimPlan: (planId: string, playerId: string) => void;
 }
 
 export function GameBoard({
@@ -60,7 +59,6 @@ export function GameBoard({
   onRequestPassTurn,
   onConfirmTurn,
   onClearPendingTurn,
-  onClaimPlan,
 }: GameBoardProps) {
   const [confirmReset, setConfirmReset] = useState(false);
 
@@ -290,30 +288,21 @@ export function GameBoard({
 
               <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden rounded-xl border border-white/10 bg-black/10 px-2 py-4">
                 <div className="flex flex-row flex-wrap gap-4 items-start justify-center">
-                  {activePlans.map((plan) => {
-                    const disabled = phase !== "action" || !currentPlayer || hasPendingChanges;
-                    return (
-                      <button
-                        key={`${plan.id}-${seed}`}
-                        type="button"
-                        disabled={disabled}
-                        className={`animate-fadeIn text-left shrink-0 ${
-                          disabled ? "opacity-50 cursor-not-allowed" : "transition-transform hover:scale-[1.02]"
-                        }`}
-                        onClick={() => currentPlayer && onClaimPlan(plan.id, currentPlayer.id)}
-                        title="Claim this plan for the current player"
-                      >
-                        <PlanCard
-                          id={plan.id}
-                          name={plan.name}
-                          type={plan.type}
-                          cost={plan.cost}
-                          effect={plan.effect}
-                          starValue={plan.starValue}
-                        />
-                      </button>
-                    );
-                  })}
+                  {activePlans.map((plan) => (
+                    <div
+                      key={`${plan.id}-${seed}`}
+                      className="animate-fadeIn text-left shrink-0"
+                    >
+                      <PlanCard
+                        id={plan.id}
+                        name={plan.name}
+                        type={plan.type}
+                        cost={plan.cost}
+                        effect={plan.effect}
+                        starValue={plan.starValue}
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>

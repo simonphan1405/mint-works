@@ -65,7 +65,6 @@ export function GameBoardContainer() {
       onRequestPassTurn={() => dispatch({ type: "REQUEST_PASS_TURN" })}
       onConfirmTurn={() => dispatch({ type: "CONFIRM_TURN" })}
       onClearPendingTurn={() => dispatch({ type: "CLEAR_PENDING_TURN" })}
-      onClaimPlan={(planId, playerId) => claimPlanForPlayer(planId, playerId)}
     />
   );
 }
