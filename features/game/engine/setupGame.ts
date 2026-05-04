@@ -73,14 +73,13 @@ export function createPlayers(playerCount: number): PlayerState[] {
   return Array.from({ length: playerCount }).map((_, index) => ({
     id: `p${index + 1}`,
     name: `Player ${index + 1}`,
-    mint: 0,
-    workersTotal: 3,
-    workersAvailable: 3,
-    workersPlaced: 0,
+    mint: 3,
     score: 0,
     isStartingPlayer: index === 0,
     planIds: [],
+    claimedPlans: [],
     buildingIds: [],
+    buildings: [],
   }));
 }
 

@@ -6,4 +6,8 @@ export type GameAction =
       locationId: string;
       spaceIndex: number;
       mintCount?: number;
-    };
+    }
+  | { type: "REQUEST_PASS_TURN" }
+  | { type: "CONFIRM_TURN" }
+  | { type: "CLEAR_PENDING_TURN" }
+  | { type: "CLEAR_LOG" };

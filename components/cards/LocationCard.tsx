@@ -18,6 +18,8 @@ export interface SpaceOption {
   occupiedMintCount?: number;
   allowsOccupiedPlacement?: boolean;
   requiresSelfPlacementFirst?: boolean;
+  canAfford?: boolean;
+  isClickable?: boolean;
 }
 
 export interface LocationCardProps {
@@ -61,7 +63,6 @@ export function LocationCard({
           "0 10px 20px rgba(0,0,0,0.3), inset 0 0 30px rgba(180,165,135,0.3)",
       }}
     >
-      {/* Subtle noise texture */}
       <div
         className="absolute inset-0 opacity-[0.35] mix-blend-multiply pointer-events-none rounded-[12px]"
         style={{
@@ -69,9 +70,7 @@ export function LocationCard({
         }}
       />
 
-      {/* Card Content Grid */}
       <div className="flex gap-[8px] w-full h-full relative z-10">
-        {/* Left Column - Players */}
         <div className="w-[68px] bg-[#89AFA7] rounded-[6px] border border-[#7C9E96]/30 shadow-[inset_1px_1px_5px_rgba(0,0,0,0.1)] flex flex-col items-center justify-center py-2 relative overflow-visible">
           <div className="flex flex-col gap-[16px] items-center z-10">
             {mintPlacementSpace.map((space, i) => (
@@ -83,12 +82,12 @@ export function LocationCard({
                 planOptions={planOptions}
                 allowsOccupiedPlacement={space.allowsOccupiedPlacement}
                 requiresSelfPlacementFirst={space.requiresSelfPlacementFirst}
+                isClickable={space.isClickable}
                 onChange={(mintCount) => onSpaceClick?.(i, mintCount)}
               />
             ))}
           </div>
 
-          {/* PLAYERS text */}
           {playersText && (
             <div
               className="absolute right-0 top-1/2 -translate-y-1/2 rotate-180 flex items-center justify-center opacity-60"
@@ -101,9 +100,7 @@ export function LocationCard({
           )}
         </div>
 
-        {/* Right Column */}
         <div className="flex-1 flex flex-col gap-[8px]">
-          {/* Header Row */}
           <div className="h-[40px] bg-[#89AFA7] rounded-[6px] border border-[#7C9E96]/30 shadow-[inset_1px_1px_5px_rgba(0,0,0,0.1)] flex items-center px-2.5 relative overflow-hidden">
             <div className="relative z-10 flex items-center w-full">
               {type === "Core" && (
@@ -121,16 +118,13 @@ export function LocationCard({
             </div>
           </div>
 
-          {/* Main Content Area */}
           <div className="flex-1 bg-[#89AFA7] rounded-[6px] border border-[#7C9E96]/30 shadow-[inset_1px_1px_5px_rgba(0,0,0,0.1)] flex flex-col relative items-center justify-center">
-            {/* Action */}
             {effect && (
               <div className="mt-[-10px] flex flex-col items-center justify-center gap-0.5 w-full relative z-10 px-1">
                 {renderEffectRow(effect)}
               </div>
             )}
 
-            {/* Flavor text - Hidden if owner section exists to prevent collision */}
             {flavorText && !ownerEffect && (
               <div className="absolute bottom-[10px] w-full text-center px-2">
                 <span className="text-[#F1EAD7] opacity-90 font-dancing text-[10px] tracking-wide inline-block leading-none">
@@ -139,10 +133,8 @@ export function LocationCard({
               </div>
             )}
 
-            {/* Owner Section */}
             {ownerEffect && (
               <div className="absolute bottom-[2px] right-[2px] left-[2px] h-[28px]">
-                {/* The OWNER tab */}
                 <div
                   className="absolute right-0 top-[-18px] bg-[#E1EDEB] rounded-t-[4px] px-1.5 py-0.5 flex items-center justify-center z-10"
                   style={{
@@ -153,7 +145,6 @@ export function LocationCard({
                     Owner
                   </span>
                 </div>
-                {/* Main Upkeep box */}
                 <div
                   className="absolute bottom-0 w-full h-full bg-[#E1EDEB] rounded-[4px] rounded-tr-none z-20 flex items-center justify-center px-1 py-4"
                   style={{
@@ -176,8 +167,6 @@ export function LocationCard({
 
 type DottedCircleState = "empty" | "selecting" | "occupied";
 
-// ─── Plan Selection Modal ────────────────────────────────────────────────────
-
 function PlanSelectModal({
   plans,
   onSelect,
@@ -187,7 +176,6 @@ function PlanSelectModal({
   onSelect: (cost: number) => void;
   onClose: () => void;
 }) {
-  // Close on Escape key
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -203,18 +191,15 @@ function PlanSelectModal({
       role="dialog"
       aria-label="Select a plan"
     >
-      {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       />
 
-      {/* Modal panel */}
       <div
         className="relative z-10 w-[340px] bg-[#1C1A17] border border-[#E9B04D]/30 rounded-[12px] shadow-[0_20px_60px_rgba(0,0,0,0.8)] overflow-hidden"
         style={{ animation: "fadeInScale 0.18s ease-out" }}
       >
-        {/* Header */}
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/10 bg-[#E9B04D]/5">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#E9B04D] shadow-[0_0_6px_#E9B04D]" />
@@ -233,12 +218,10 @@ function PlanSelectModal({
           </button>
         </div>
 
-        {/* Subtitle */}
         <p className="px-5 pt-3 pb-1 text-white/40 text-xs font-sans tracking-wide">
           Place mints equal to the selected plan&apos;s cost.
         </p>
 
-        {/* Plan list */}
         <div className="px-3 pb-3 pt-1 flex flex-col gap-1 max-h-[320px] overflow-y-auto">
           {plans.length === 0 ? (
             <div className="px-3 py-4 text-center text-white/30 font-oswald text-sm tracking-wide">
@@ -277,16 +260,14 @@ function PlanSelectModal({
   );
 }
 
-// ─── DottedCircle ────────────────────────────────────────────────────────────
-
 export const DottedCircle = ({
   number,
   occupied = false,
   occupiedMintCount,
   planOptions = [],
   onChange,
-  allowsOccupiedPlacement = false,
   requiresSelfPlacementFirst = false,
+  isClickable = true,
 }: {
   number: string | number;
   occupied?: boolean;
@@ -295,6 +276,7 @@ export const DottedCircle = ({
   onChange?: (mintCount?: number) => void;
   allowsOccupiedPlacement?: boolean;
   requiresSelfPlacementFirst?: boolean;
+  isClickable?: boolean;
 }) => {
   const isWildcard = number === "*" || number === "1+";
   const usesPlanSelection = number === "*";
@@ -309,32 +291,28 @@ export const DottedCircle = ({
   }, [occupied, occupiedMintCount]);
 
   const handleClick = () => {
+    if (!isClickable && !occupied) {
+      return;
+    }
+
     if (!isWildcard) {
-      const nextOccupied = state === "empty";
-      setState(nextOccupied ? "occupied" : "empty");
-      onChange?.();
+      if (!occupied) {
+        onChange?.();
+      }
       return;
     }
 
     if (requiresSelfPlacementFirst) {
-      if (state === "empty") {
+      if (!occupied) {
         setState("occupied");
         setOccupiedCount(1);
         onChange?.(1);
-      } else if (state === "occupied") {
-        setState("empty");
-        setOccupiedCount(0);
-        onChange?.();
       }
       return;
     }
 
     if (state === "empty") {
       setState("selecting");
-    } else if (state === "occupied") {
-      setState("empty");
-      setOccupiedCount(0);
-      onChange?.();
     }
   };
 
@@ -354,14 +332,17 @@ export const DottedCircle = ({
 
   return (
     <div className="relative flex items-center justify-center mx-auto">
-      {/* The circle button */}
       <div
-        className={`w-[32px] h-[32px] rounded-full border-2 border-dotted flex items-center justify-center cursor-pointer relative transition-all duration-200 hover:scale-110 ${
+        className={`w-[32px] h-[32px] rounded-full border-2 border-dotted flex items-center justify-center relative transition-all duration-200 ${
+          isClickable && !isOccupied ? "cursor-pointer hover:scale-110" : "cursor-default"
+        } ${
           isSelecting
             ? "border-[#E9B04D] scale-110"
             : isOccupied
             ? "border-[#EAE3CE]"
-            : "border-[#EAE3CE]/80 hover:border-[#EAE3CE]"
+            : isClickable
+            ? "border-[#EAE3CE]/80 hover:border-[#EAE3CE]"
+            : "border-[#EAE3CE]/40 opacity-60"
         }`}
         onClick={handleClick}
       >
@@ -372,7 +353,7 @@ export const DottedCircle = ({
         ) : (
           <span
             className={`text-[22px] font-oswald font-medium drop-shadow-sm leading-none ${
-              isSelecting ? "text-[#E9B04D]" : "text-[#EAE3CE]/90"
+              isSelecting ? "text-[#E9B04D]" : isClickable ? "text-[#EAE3CE]/90" : "text-[#EAE3CE]/45"
             } ${usesPlanSelection ? "mt-2" : "mb-0.5"}`}
           >
             {number}
@@ -380,7 +361,6 @@ export const DottedCircle = ({
         )}
       </div>
 
-      {/* Modal — only for wildcard spaces when selecting */}
       {usesPlanSelection && isSelecting && (
         <PlanSelectModal
           plans={planOptions}

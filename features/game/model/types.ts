@@ -1,18 +1,28 @@
 import type { LocationData } from "@/data/cards/locations";
+import type { PlanData } from "@/data/cards/plans";
 
-export type GamePhase = "setup" | "ready" | "gameEnd";
+export type GamePhase = "setup" | "action" | "upkeep" | "gameEnd";
+
+export interface PlayerBuildingState {
+  id: string;
+  name: string;
+  type: PlanData["type"];
+  cost: number;
+  effect?: string;
+  starValue: string;
+  storedMint: number;
+}
 
 export interface PlayerState {
   id: string;
   name: string;
   mint: number;
-  workersTotal: number;
-  workersAvailable: number;
-  workersPlaced: number;
   score: number;
   isStartingPlayer: boolean;
   planIds: string[];
+  claimedPlans: PlanData[];
   buildingIds: string[];
+  buildings: PlayerBuildingState[];
 }
 
 export interface LocationSpaceState {
@@ -30,6 +40,23 @@ export interface BoardLocationState {
   isOpen: boolean;
 }
 
+export interface TurnLogEntry {
+  id: string;
+  text: string;
+}
+
+export interface PendingPlacement {
+  locationId: string;
+  spaceIndex: number;
+  mintCount: number;
+}
+
+export interface PendingTurnState {
+  playerId: string;
+  placements: PendingPlacement[];
+  passRequested: boolean;
+}
+
 export interface GameBoardState {
   playerCount: number;
   seed: number;
@@ -40,8 +67,14 @@ export interface GameState {
   phase: GamePhase;
   round: number;
   currentPlayerId: string;
+  actionStartPlayerId: string;
+  consecutivePasses: number;
+  pendingTurn: PendingTurnState;
   players: PlayerState[];
   board: GameBoardState;
+  winnerPlayerId?: string;
+  lastAction?: string;
+  log: TurnLogEntry[];
 }
 
 export interface LocationCardSpaceViewModel {
@@ -50,6 +83,9 @@ export interface LocationCardSpaceViewModel {
   occupiedMintCount?: number;
   allowsOccupiedPlacement?: boolean;
   requiresSelfPlacementFirst?: boolean;
+  canAfford?: boolean;
+  isClickable?: boolean;
+  isPending?: boolean;
 }
 
 export interface LocationCardViewModel
